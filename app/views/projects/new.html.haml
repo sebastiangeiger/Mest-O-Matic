@@ -1,0 +1,12 @@
+%h1 New Project
+= form_for :project, @project, :url => {:action => "create"} do |f|
+	%legend Create a new Project
+	%ol
+		%li
+			%label Title
+			= f.text_field :title
+		%li
+			%label Description
+			= f.text_area :description
+		%li
+			= submit_tag "create"
