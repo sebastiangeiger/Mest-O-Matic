@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(:version => 20110505105605) do
 
-  create_table "class_ofs", :id => false, :force => true do |t|
+  create_table "class_ofs", :force => true do |t|
     t.integer  "year"
     t.datetime "created_at"
     t.datetime "updated_at"

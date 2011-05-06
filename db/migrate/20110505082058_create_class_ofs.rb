@@ -1,6 +1,6 @@
 class CreateClassOfs < ActiveRecord::Migration
   def self.up
-    create_table :class_ofs, :id => false do |t|
+    create_table :class_ofs do |t|
       t.integer :year
 
       t.timestamps
