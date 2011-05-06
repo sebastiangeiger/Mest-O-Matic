@@ -1,1 +1,5 @@
-%h1 Projects
+%h1= "Projects (#{@projects.size})" 
+= link_to "+", new_project_path
+%ul
+	- @projects.each do |project|
+		%li= link_to project.title, project
