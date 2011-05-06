@@ -12,5 +12,8 @@
 			%label Subject
 			= collection_select(:project, :subject_id, Subject.all, :id, :title, :include_blank => true)
 		%li
+			%label Semester
+			= collection_select(:project, :semester_id, Semester.all, :id, :title)
+		%li
 			= submit_tag "create"
 		
