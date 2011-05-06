@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110505090502) do
+ActiveRecord::Schema.define(:version => 20110505105605) do
 
   create_table "class_ofs", :id => false, :force => true do |t|
     t.integer  "year"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(:version => 20110505090502) do
     t.integer  "semester_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "subject_id"
   end
 
   create_table "semesters", :force => true do |t|
@@ -33,6 +34,12 @@ ActiveRecord::Schema.define(:version => 20110505090502) do
     t.date     "start"
     t.date     "end"
     t.integer  "class_of_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "subjects", :force => true do |t|
+    t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

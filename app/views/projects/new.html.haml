@@ -9,4 +9,8 @@
 			%label Description
 			= f.text_area :description
 		%li
+			%label Subject
+			= collection_select(:project, :subject_id, Subject.all, :id, :title, :include_blank => true)
+		%li
 			= submit_tag "create"
+		
