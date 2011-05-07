@@ -1,0 +1,15 @@
+!!!
+%html
+	%head
+		%title MestOMatic
+		= stylesheet_link_tag :all
+		= javascript_include_tag :defaults
+		= csrf_meta_tag
+	%body
+		.debug= params.inspect
+		- [:notice, :error, :success].each do |key|
+			- unless flash[key].blank?
+				%p{ :class => "flash #{key}" }= flash[key]
+		
+		= yield
+
