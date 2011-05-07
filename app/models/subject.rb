@@ -11,4 +11,6 @@
 
 class Subject < ActiveRecord::Base
   has_many :projects
+  validates_uniqueness_of :title, :case_sensitive => false
+  validates :title, :presence => true
 end
