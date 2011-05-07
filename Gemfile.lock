@@ -29,6 +29,7 @@ GEM
       activemodel (= 3.0.7)
       activesupport (= 3.0.7)
     activesupport (3.0.7)
+    annotate-models (1.0.4)
     arel (2.0.9)
     autotest (4.4.6)
       ZenTest (>= 4.4.1)
@@ -88,6 +89,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  annotate-models
   autotest
   autotest-growl
   haml

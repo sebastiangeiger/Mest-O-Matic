@@ -1,3 +1,17 @@
+# == Schema Information
+# Schema version: 20110505105605
+#
+# Table name: semesters
+#
+#  id          :integer         not null, primary key
+#  nr          :integer
+#  start       :date
+#  end         :date
+#  class_of_id :integer
+#  created_at  :datetime
+#  updated_at  :datetime
+#
+
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:

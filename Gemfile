@@ -22,15 +22,15 @@ gem 'sqlite3'
 # gem 'nokogiri'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
+gem 'haml' #using haml instead of erb
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
-# group :development, :test do
-#   gem 'webrat'
-# end
+group :development do
+  gem 'annotate-models'
+end
 
-gem 'haml' #using haml instead of erb
 
 group :test do
 	gem "rspec", ">= 2"
