@@ -16,5 +16,8 @@
 			%label Semester
 			= collection_select(:project, :semester_id, Semester.all, :id, :title)
 		%li
+			%label Start date
+			= date_select :project, :start
+		%li
 			= submit_tag "create"
 		
