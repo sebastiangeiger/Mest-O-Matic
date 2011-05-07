@@ -16,8 +16,9 @@ class Semester < ActiveRecord::Base
   has_many :projects
   belongs_to :class_of
   
-  validates_uniqueness_of :class_of_id, :nr
+  validates_uniqueness_of :nr, :scope => :class_of_id
   validates :class_of, :presence => true
+  validates :nr, :presence => true
 
   def title
     "#{class_of.year} / #{nr}"
