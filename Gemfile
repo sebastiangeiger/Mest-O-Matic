@@ -31,3 +31,11 @@ gem 'sqlite3'
 # end
 
 gem 'haml' #using haml instead of erb
+
+group :test do
+	gem "rspec", ">= 2"
+	gem "rspec-rails"
+	gem "autotest"
+	gem "autotest-growl"
+end
+
