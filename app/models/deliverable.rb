@@ -24,6 +24,6 @@ class Deliverable < ActiveRecord::Base
   validate :start_date_must_be_before_end_date
   
   def start_date_must_be_before_end_date
-    errors.add(:end_time, 'start date must be before end date') if start_date and end_date and start_date >= end_date
+    errors.add(:end_date, 'must be after start date') if start_date and end_date and start_date >= end_date
   end
 end

@@ -224,3 +224,12 @@ form #button{
 	color: grey;
 	font-size: 80%;
 }
+
+.field_with_errors{
+	background-color: red;
+}
+
+.error_explanation{
+	border: 1px solid red;
+	background-color: lightgrey;
+}

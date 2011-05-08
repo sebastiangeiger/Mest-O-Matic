@@ -1,7 +1,7 @@
 - if target and target.errors.any? then
 	- errors = target.errors 
 	.error_explanation
-		%h2= "#{pluralize(errors.count, "error")} prohibited this user from being saved:"
+		%h2= "#{pluralize(errors.count, "error")} prohibited this #{target.class} from being saved:"
 		%ul
 			- errors.full_messages.each do |message|
 				%li= message	
