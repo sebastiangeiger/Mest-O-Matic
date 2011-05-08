@@ -1,0 +1,11 @@
+%h1= "Project \"#{@project.title}\""
+.semester= "Class of #{@project.semester.class_of.year}" if @project.semester
+.description= @project.description
+.subject= "Subject: #{@project.subject.title}" if @project.subject
+.start_date= "Start date: #{@project.start}"
+.end_date= "End date: #{@project.end}" if @project.end
+.timestamps
+	= "Created: #{@project.created_at}"
+	= "Updated: #{@project.updated_at}" unless @project.created_at == @project.updated_at
+%h2= "Deliverables (#{@project.deliverables.count})"
+= render :partial => "deliverables/summary", :collection => @project.deliverables, :as => :deliverable 
