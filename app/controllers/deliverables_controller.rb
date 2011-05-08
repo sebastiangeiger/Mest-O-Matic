@@ -19,6 +19,7 @@ class DeliverablesController < ApplicationController
     elsif @deliverable.save
       redirect_to project_path(@project), :notice => "Successfully created the deliverable #{@deliverable.title}"
     else
+      @project.deliverables.delete(@deliverable)
       render :action => "new"
     end
   end
