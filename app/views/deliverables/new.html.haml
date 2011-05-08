@@ -12,10 +12,10 @@
 				= f.text_field :description
 			%li
 				%label Start date
-				= date_select :deliverable, :start_date, :start_year => Time.now.year - 1
+				= datetime_select :deliverable, :start_date, :start_year => Time.now.year - 1
 			%li
 				%label End date
-				= date_select :deliverable, :end_date, :start_year => Time.now.year - 1
+				= datetime_select :deliverable, :end_date, :start_year => Time.now.year - 1
 			%li
 				#button
 					= submit_tag "cancel"

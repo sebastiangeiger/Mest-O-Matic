@@ -1,14 +1,14 @@
 # == Schema Information
-# Schema version: 20110508021842
+# Schema version: 20110508194142
 #
 # Table name: deliverables
 #
 #  id          :integer         not null, primary key
 #  title       :string(255)
 #  description :string(255)
-#  start_date  :date
-#  end_date    :date
-#  projects_id :integer
+#  start_date  :datetime
+#  end_date    :datetime
+#  project_id  :integer
 #  created_at  :datetime
 #  updated_at  :datetime
 #
