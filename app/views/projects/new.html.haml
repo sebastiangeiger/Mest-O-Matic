@@ -17,7 +17,10 @@
 			= collection_select(:project, :semester_id, Semester.all, :id, :title)
 		%li
 			%label Start date
-			= date_select :project, :start
+			= date_select :project, :start, :start_year => Time.now.year - 1
+		%li
+			%label End date
+			= date_select :project, :end, :include_blank => true, :start_year => Time.now.year - 1
 		%li
 			= submit_tag "create"
 		
