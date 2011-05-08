@@ -6,10 +6,27 @@
 		= javascript_include_tag :defaults
 		= csrf_meta_tag
 	%body
-		.debug= params.inspect
-		.debug= flash.inspect
-		- [:notice, :error, :success].each do |key|
-			- unless flash[key].blank?
-				%p{:class => "flash #{key}"}= flash[key]
-		= yield
+		#wrapper
+			#container
+				#navigation
+					.debug
+						Params:
+						= params.inspect
+						| Flash:
+						= flash.inspect
+					- [:notice, :error, :success].each do |key|
+						- unless flash[key].blank?
+							%p{:class => "flash #{key}"}= flash[key]
+				#content
+					= yield
+				#footer
+					%p 
+						Please note that this application is still under development and that the scores you see here might be completely wrong. 
+						If in doubt the grades in the internal staff document will always overrule the scores presented here.
+				
+					%p 
+						If you have questions or feedback please contact
+						= succeed "." do #Ugly but works
+							%a{:href => "mailto:sebastian.geiger@meltwater.org?subject=ShowGrades"} Sebastian
+				
 

@@ -1,0 +1,204 @@
+$error_fg: #5f0001;
+$error_bg: #cd787a;
+$error_border: #814b4c;
+$error_light: #cdb6b7;
+$ok_fg: #304b10;
+$ok_bg: #bedf7e;
+$ok_border: #8aa25c;
+$ok_light: #cdb6b7;
+$disabled_fg: #8b8b8b;
+$disabled_bg: #9d9d9d;
+$disabled_border: #8b8b8b;
+$neutral_fg: #3a3a3a;
+$neutral_bg: #9d9d9d;
+$neutral_border: #747474;
+$neutral_light: #b4b4b4;
+
+body {
+	background-color: darkgrey;
+	padding: 20px;
+	font-family: "Lucida Grande", Lucida, Verdana, sans-serif;
+}
+
+h1 {
+	margin:0px;
+	padding:0px;
+	padding-bottom:10px;
+}
+
+h2,h3 {
+	margin: 0px;
+	margin-bottom: 5px;
+}
+
+td, th {
+	padding-right: 5px;
+	text-align: left;
+}
+
+#container {
+	max-width: 600px;
+}
+
+#content {
+	background-color:white;
+	padding: 10px;
+}
+
+#content a {
+	color:black;
+}
+
+#content a:hover {
+	font-style:italic;
+}
+div.panel {
+	padding: 40px;	
+	padding-top: 10px;
+}
+
+.error {
+	color: $error_fg;
+	background-color: $error_bg;
+}
+
+div.error h2{
+	border-bottom:1px solid $error_fg;	
+}
+
+div.error .panel{
+	background-color: $error_light;
+}
+
+.ok {
+	color: $ok_fg;
+	background-color: $ok_bg;
+}
+
+div.ok h2{	
+	border-bottom:1px solid $ok_fg;
+}
+
+.disabled {
+	color: $disabled_fg;
+	background-color: $disabled_bg;
+}
+
+div.disabled h2{
+	border-bottom:1px solid $disabled_border;	
+}
+
+.neutral, .notice {
+	color: $neutral_fg;
+	background-color: $neutral_bg;
+}
+
+div.neutral h2{
+	border-bottom:1px solid $neutral_border;	
+}
+
+div.neutral h2 a {
+	color: white;
+}
+
+div.neutral h2 a:hover {
+	text-shadow: $neutral_border 1px 1px 10px;
+}
+
+div.neutral .panel{
+	background-color: $neutral_light;
+}
+
+.help {
+	padding: 20px;
+	color: white;
+	background-color: darkgrey;
+}
+
+.error textarea {
+  	width: 99%;
+  	border: 1px solid #814b4c;
+  	min-height: 150px; 
+}
+
+input.button {
+	float: right;
+}
+
+.panel ul{
+	margin-bottom: 20px;
+}
+
+.user_panel{
+	padding: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: black;
+	color: white;
+}
+
+.user_panel a {
+	color:white;
+}
+.user_panel a:hover {
+	font-style: italic;
+}
+
+.user_panel #logout {
+	float:right;
+}
+.user_panel .text {
+	float:left;
+}
+
+#clear {
+	clear:both;
+}
+
+#footer {
+	border-top: 2px solid $neutral_fg;
+	height: 100px;
+	background-color: white;
+	background-image:url("/images/logo.jpg");
+	background-repeat: no-repeat;
+	background-position: right;
+	color: darkgrey;
+	padding: 10px;
+	padding-right:110px;
+	font-size: 80%;
+}
+
+#footer a {
+	color: $neutral_bg;
+}
+
+.debug{
+	background-color: lightyellow;
+	margin-bottom: 20px;
+	font-size: 70%;
+	font-family: monospace;
+}
+
+
+/*Forms*/
+form label {
+	float:left;
+	margin-right: 10px;
+	text-align: right;
+	width: 150px;
+}
+
+form ol {
+	list-style: none;
+}
+
+form #button{
+	text-align: right;
+}
+
+/*Show Project*/
+.description{
+	border: 1px dashed darkgrey;
+	padding: 10px;
+	background-color:lightgrey;
+}
