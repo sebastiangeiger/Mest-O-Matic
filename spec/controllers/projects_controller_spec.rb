@@ -38,9 +38,9 @@ describe ProjectsController do
       it "should create a new project" do
         Project.should_receive(:new).and_return(@project)
         @project.should_receive(:save).and_return(true)
-        @project.should_receive(:id).and_return(83)
+        @project.should_receive(:id).at_least(:once).and_return(83)
         get :create
-        response.should redirect_to(:action => :show, :id => 83)
+        response.should redirect_to(project_path(@project))
       end
     end
     describe "with invalid parameters" do
