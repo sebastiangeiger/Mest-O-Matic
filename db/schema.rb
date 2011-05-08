@@ -10,10 +10,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110505105605) do
+ActiveRecord::Schema.define(:version => 20110508021842) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "deliverables", :force => true do |t|
+    t.string   "title"
+    t.string   "description"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.integer  "projects_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

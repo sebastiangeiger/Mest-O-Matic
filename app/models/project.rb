@@ -15,6 +15,8 @@
 #
 
 class Project < ActiveRecord::Base
+  has_many :deliverables
+  
   belongs_to :semester
   belongs_to :subject
   
