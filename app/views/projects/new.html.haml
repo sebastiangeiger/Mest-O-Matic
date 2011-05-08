@@ -8,7 +8,7 @@
 			= f.text_field :title
 		%li
 			%label Description
-			= f.text_area :description
+			= f.text_field :description
 		%li
 			%label Subject
 			= collection_select(:project, :subject_id, Subject.all, :id, :title, :include_blank => true)
