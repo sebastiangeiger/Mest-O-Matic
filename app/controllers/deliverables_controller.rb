@@ -14,7 +14,9 @@ class DeliverablesController < ApplicationController
   def create
     @deliverable = Deliverable.new(params[:deliverable])
     @project.deliverables << @deliverable
-    if @deliverable.save
+    if params[:commit].eql?("cancel") 
+      redirect_to project_path(@project) 
+    elsif @deliverable.save
       redirect_to project_path(@project), :notice => "Successfully created the deliverable #{@deliverable.title}"
     else
       render :action => "new"

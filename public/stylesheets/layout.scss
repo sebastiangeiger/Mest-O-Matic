@@ -202,3 +202,25 @@ form #button{
 	padding: 10px;
 	background-color:lightgrey;
 }
+
+.deliverable_summary, .deliverable_summary_past, .new_deliverable_form{
+	margin-top: 5px;
+	margin-bottom: 5px;
+	border: 1px dashed darkgrey;
+	padding: 5px;
+	background-color:lightgrey;
+}
+
+.deliverable_summary_past{
+	text-decoration: line-through;
+}
+
+.new_deliverable_form{
+	border-style: solid;
+	background-color: grey;
+}
+.time_label{
+	font-style:italic;
+	color: grey;
+	font-size: 80%;
+}

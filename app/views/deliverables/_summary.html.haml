@@ -1,3 +1,11 @@
-.deliverable_summary
-	= deliverable.title
-	Due in #TODO
+- if deliverable.end_date and deliverable.end_date > Date.new or deliverable.end_date.nil?
+	.deliverable_summary
+		= deliverable.title
+		%span.time_label
+			= "(due in #{distance_of_time_in_words_to_now(deliverable.end_date)})" if deliverable.end_date 
+- else
+	.deliverable_summary_past
+		= deliverable.title
+		%span.time_label
+			= "(due #{distance_of_time_in_words_to_now(deliverable.end_date)} ago)" if deliverable.end_date and deliverable.end_date <= Date.new
+		

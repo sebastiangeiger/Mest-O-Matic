@@ -1,19 +1,22 @@
 = render :partial => "projects/detail"
-= form_for :deliverable, @deliverable, :url => project_deliverables_url(@project) do |f|
-	= render :partial => 'shared/error_messages', :locals => {:target => @deliverable}
-	%legend Create a new Deliverable
-	%ol
-		%li
-			%label Title
-			= f.text_field :title
-		%li
-			%label Description
-			= f.text_field :description
-		%li
-			%label Start date
-			= date_select :deliverable, :start_date, :start_year => Time.now.year - 1
-		%li
-			%label End date
-			= date_select :deliverable, :end_date, :include_blank => true, :start_year => Time.now.year - 1
-		%li
-			#button= submit_tag "create"
+.new_deliverable_form
+	= form_for :deliverable, @deliverable, :url => project_deliverables_url(@project) do |f|
+		= render :partial => 'shared/error_messages', :locals => {:target => @deliverable}
+		%legend Create a new Deliverable
+		%ol
+			%li
+				%label Title
+				= f.text_field :title
+			%li
+				%label Description
+				= f.text_field :description
+			%li
+				%label Start date
+				= date_select :deliverable, :start_date, :start_year => Time.now.year - 1
+			%li
+				%label End date
+				= date_select :deliverable, :end_date, :start_year => Time.now.year - 1
+			%li
+				#button
+					= submit_tag "cancel"
+					= submit_tag "create"
