@@ -3,9 +3,9 @@ require_relative '../spec_helper.rb'
 describe Deliverable do
   before(:each) do
     @project = Project.new
-    @project.stub(:id).and_return(1)
+    @project.stubs(:id).returns(1)
     @project_2 = Project.new
-    @project_2.stub(:id).and_return(2)
+    @project_2.stubs(:id).returns(2)
   end
   
   it "should create a deliverable with a title, a project and start/end dates" do

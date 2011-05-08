@@ -8,7 +8,7 @@ describe ProjectsController do
 
   describe "responding to GET index" do
     it "should load all projects and render index template" do
-      Project.should_receive(:all).and_return @projects
+      Project.expects(:all).returns @projects
       get :index
       assigns[:projects].should == @projects
       response.should render_template("projects/index")
@@ -26,7 +26,7 @@ describe ProjectsController do
 
   describe "responding to GET show" do
     it "should load a specific project and render the show template" do
-      Project.should_receive(:find).with(1).and_return @project
+      Project.expects(:find).with(1).returns @project
       get :show, :id => 1
       assigns[:project].should == @project
       response.should render_template("projects/show")
@@ -36,17 +36,17 @@ describe ProjectsController do
   describe "responding to POST create" do
     describe "with valid parameters" do
       it "should create a new project" do
-        Project.should_receive(:new).and_return(@project)
-        @project.should_receive(:save).and_return(true)
-        @project.should_receive(:id).at_least(:once).and_return(83)
+        Project.expects(:new).returns(@project)
+        @project.expects(:save).returns(true)
+        @project.expects(:id).at_least_once.returns(83)
         get :create
         response.should redirect_to(project_path(@project))
       end
     end
     describe "with invalid parameters" do
       it "should render the new template" do
-        Project.should_receive(:new).and_return(@project)
-        @project.should_receive(:save).and_return(false)
+        Project.expects(:new).returns(@project)
+        @project.expects(:save).returns(false)
         get :create
         response.should render_template("projects/new")
       end      

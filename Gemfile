@@ -38,5 +38,6 @@ group :test do
 	gem "rspec-rails"
 	gem "autotest"
 	gem "autotest-growl"
+	gem "mocha"
 end
 

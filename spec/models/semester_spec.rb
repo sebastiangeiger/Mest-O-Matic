@@ -3,9 +3,9 @@ require_relative '../spec_helper.rb'
 describe Semester do
   before(:each) do
     @class_of = ClassOf.new
-    @class_of.stub(:id).and_return(1)
+    @class_of.stubs(:id).returns(1)
     @class_of_2 = ClassOf.new
-    @class_of.stub(:id).and_return(2)
+    @class_of.stubs(:id).returns(2)
   end
 
   it "should create a semester with a class_of and a nr" do
