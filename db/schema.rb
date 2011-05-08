@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(:version => 20110508021842) do
     t.string   "description"
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "projects_id"
+    t.integer  "project_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

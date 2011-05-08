@@ -5,7 +5,7 @@ class CreateDeliverables < ActiveRecord::Migration
       t.string :description
       t.date :start_date
       t.date :end_date
-      t.references :projects
+      t.references :project
       t.timestamps
     end
   end
