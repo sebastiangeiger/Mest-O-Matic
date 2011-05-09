@@ -35,9 +35,11 @@ GEM
       ZenTest (>= 4.4.1)
     autotest-growl (0.2.9)
     builder (2.1.2)
+    daemons (1.0.10)
     diff-lcs (1.1.2)
     erubis (2.6.6)
       abstract (>= 1.0.0)
+    gem_plugin (0.2.3)
     haml (3.1.1)
     i18n (0.5.0)
     mail (2.2.19)
@@ -47,6 +49,9 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.16)
     mocha (0.9.12)
+    mongrel (1.2.0.pre2)
+      daemons (~> 1.0.10)
+      gem_plugin (~> 0.2.3)
     polyglot (0.3.1)
     rack (1.2.2)
     rack-mount (0.6.14)
@@ -100,6 +105,7 @@ DEPENDENCIES
   autotest-growl
   haml
   mocha
+  mongrel (= 1.2.0.pre2)
   rack-openid
   rails (= 3.0.7)
   rspec (>= 2)

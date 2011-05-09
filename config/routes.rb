@@ -1,8 +1,13 @@
 MestOMatic::Application.routes.draw do
+  
+  root :to => "welcome#index"
+  
+  resource :sessions
+
   resources :projects do
     resources :deliverables
   end
-  
+    
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

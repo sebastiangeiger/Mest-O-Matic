@@ -33,6 +33,7 @@ gem 'rack-openid'
 # and rake tasks are available in development mode:
 group :development do
   gem 'annotate-models'
+  gem 'mongrel', '1.2.0.pre2'         #getting WEBrick::HTTPStatus::RequestURITooLarge in conjunction with openid
 end
 
 
