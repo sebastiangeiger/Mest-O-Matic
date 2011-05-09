@@ -1,6 +1,8 @@
 require_relative '../spec_helper.rb'
 
 describe ProjectsController do
+  render_views
+  
   before(:each) do
     @project = Project.new(:title => "New Project")
     @projects = [@project]
@@ -27,6 +29,7 @@ describe ProjectsController do
   describe "responding to GET show" do
     it "should load a specific project and render the show template" do
       Project.expects(:find).with(1).returns @project
+      @project.stubs(:id).returns(1)
       get :show, :id => 1
       assigns[:project].should == @project
       response.should render_template("projects/show")
@@ -42,6 +45,12 @@ describe ProjectsController do
         get :create
         response.should redirect_to(project_path(@project))
       end
+      
+      it "should pass the params to the project item" do
+        post :create, :project => {:title => "Some Project"}
+        assigns[:project].title.should == "Some Project"
+      end
+      
     end
     describe "with invalid parameters" do
       it "should render the new template" do
