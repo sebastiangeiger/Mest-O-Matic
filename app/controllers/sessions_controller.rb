@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   
   def new
     response.headers['WWW-Authenticate'] = Rack::OpenID.build_header(
-        :identifier => "https://www.google.com/accounts/o8/id",
+        :identifier => "http://meltwater.org",
         :required => ["http://axschema.org/contact/email",
                       "http://axschema.org/namePerson/first",
                       "http://axschema.org/namePerson/last"],

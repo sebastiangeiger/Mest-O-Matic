@@ -27,6 +27,7 @@ gem 'sass'
 
 gem 'ruby-openid'
 gem 'rack-openid'
+gem 'ruby-openid-apps-discovery'
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators

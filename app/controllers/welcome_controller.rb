@@ -1,6 +1,6 @@
 class WelcomeController < ApplicationController
   def index
-    render "sessions/show"
+    render "sessions/current"
   end
 
 end

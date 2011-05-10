@@ -1,4 +1,6 @@
 class ProjectsController < ApplicationController
+  before_filter :ensure_signed_in
+  
   def index
     @projects = Project.all
   end
