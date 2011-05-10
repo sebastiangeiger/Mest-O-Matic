@@ -8,7 +8,32 @@ describe DeliverablesController do
     @project.stubs(:id).returns(11)
     Project.stubs(:find).with(11).returns @project
   end
+  
   describe "(Authentication)" do
+    describe "responding to GET new" do
+      it "should grant access to a logged in user" do
+        controller.expects(:signed_in?).returns true
+        get :new, :project_id => 11
+        response.should render_template("deliverables/new")
+      end
+      it "should not grant access to a not logged in user" do
+        controller.expects(:signed_in?).returns false        
+        get :new, :project_id => 11
+        response.should redirect_to(new_sessions_path)
+      end
+    end
+    describe "responding to POST create" do
+      it "should grant access to a logged in user" do
+        controller.expects(:signed_in?).returns true
+        post :create, :project_id => 11
+        response.should_not redirect_to(new_sessions_path)
+      end
+      it "should not grant access to a not logged in user" do
+        controller.expects(:signed_in?).returns false
+        post :create, :project_id => 11
+        response.should redirect_to(new_sessions_path)
+      end
+    end
   end
   
   describe "(Functional)" do
@@ -28,6 +53,12 @@ describe DeliverablesController do
     end
   
     describe "responding to POST create" do
+
+      it "should pass the params to the deliverable item" do
+        post :create, :project_id => 11, :deliverable => {:title => "Some Deliverable"}
+        assigns[:deliverable].title.should == "Some Deliverable"
+      end
+
       describe "user clicked cancel button" do
         it "should redirect to project path and do nothing otherwise" do
           post :create, :project_id => 11, :commit => "cancel"
@@ -48,10 +79,6 @@ describe DeliverablesController do
           flash[:notice].should_not be_nil
         end
       
-        it "should pass the params to the deliverable item" do
-          post :create, :project_id => 11, :deliverable => {:title => "Some Deliverable"}
-          assigns[:deliverable].title.should == "Some Deliverable"
-        end
       end
       describe "with invalid parameters" do
         it "should render the new template" do

@@ -1,6 +1,6 @@
 = render :partial => "projects/detail"
 .new_deliverable_form
-	= form_for :deliverable, @deliverable, :url => project_deliverables_url(@project) do |f|
+	= form_for @deliverable, :url => project_deliverables_url(@project) do |f|
 		= render :partial => 'shared/error_messages', :locals => {:target => @deliverable}
 		%legend Create a new Deliverable
 		%ol

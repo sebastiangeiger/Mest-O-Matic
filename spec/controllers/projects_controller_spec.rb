@@ -14,13 +14,13 @@ describe ProjectsController do
   describe "(Authentication)" do
     describe "responding to GET index" do
       it "should grant access to a logged in user" do
-        controller.stubs(:signed_in?).returns true
+        controller.expects(:signed_in?).returns true
         get :index
         response.should render_template("projects/index")
       end
 
       it "should not grant access to not logged in user" do
-        controller.stubs(:signed_in?).returns false
+        controller.expects(:signed_in?).returns false
         get :index
         response.should redirect_to(new_sessions_path)
       end
@@ -28,13 +28,13 @@ describe ProjectsController do
 
     describe "responding to GET new" do
       it "should grant access to a logged in user" do
-        controller.stubs(:signed_in?).returns true
+        controller.expects(:signed_in?).returns true
         get :new
         response.should render_template("projects/new")
       end
 
       it "should not grant access to a not logged in user" do
-        controller.stubs(:signed_in?).returns false
+        controller.expects(:signed_in?).returns false
         get :new
         response.should redirect_to(new_sessions_path)
       end
@@ -42,13 +42,13 @@ describe ProjectsController do
     
     describe "responding to GET show" do
       it "should grant access to a logged in user" do
-        controller.stubs(:signed_in?).returns true
+        controller.expects(:signed_in?).returns true
         Project.stubs(:find).returns @project_with_deliverables
         get :show, :id => 1
         response.should render_template("projects/show")
       end
       it "should not grant access to a not logged in user" do
-        controller.stubs(:signed_in?).returns false
+        controller.expects(:signed_in?).returns false
         Project.stubs(:find).returns @project_with_deliverables
         get :show, :id => 1
         response.should redirect_to(new_sessions_path)
@@ -57,12 +57,12 @@ describe ProjectsController do
 
     describe "responding to POST create" do
       it "should grant access to a logged in user" do
-        controller.stubs(:signed_in?).returns true
+        controller.expects(:signed_in?).returns true
         post :create
         response.should_not redirect_to(new_sessions_path)
       end
       it "should not grant access to a not logged in user" do
-        controller.stubs(:signed_in?).returns false
+        controller.expects(:signed_in?).returns false
         post :create
         response.should redirect_to(new_sessions_path)
       end
