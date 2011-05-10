@@ -6,6 +6,9 @@ describe ProjectsController do
   before(:each) do
     @project = Project.new(:title => "New Project")
     @projects = [@project]
+    @project_with_deliverables = Project.new(:title => "Project with deliverables")
+    @project_with_deliverables.stubs(:id).returns(99)
+    @project_with_deliverables.stubs(:deliverables).returns [] 
   end
 
   describe "(Authentication)" do
@@ -36,6 +39,35 @@ describe ProjectsController do
         response.should redirect_to(new_sessions_path)
       end
     end#GET:new
+    
+    describe "responding to GET show" do
+      it "should grant access to a logged in user" do
+        controller.stubs(:signed_in?).returns true
+        Project.stubs(:find).returns @project_with_deliverables
+        get :show, :id => 1
+        response.should render_template("projects/show")
+      end
+      it "should not grant access to a not logged in user" do
+        controller.stubs(:signed_in?).returns false
+        Project.stubs(:find).returns @project_with_deliverables
+        get :show, :id => 1
+        response.should redirect_to(new_sessions_path)
+      end
+    end#GET:show
+
+    describe "responding to POST create" do
+      it "should grant access to a logged in user" do
+        controller.stubs(:signed_in?).returns true
+        post :create
+        response.should_not redirect_to(new_sessions_path)
+      end
+      it "should not grant access to a not logged in user" do
+        controller.stubs(:signed_in?).returns false
+        post :create
+        response.should redirect_to(new_sessions_path)
+      end
+    end#POST:create
+    
   end#Authentication
   
   describe "(Functional)" do
