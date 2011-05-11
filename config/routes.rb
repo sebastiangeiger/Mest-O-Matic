@@ -1,9 +1,8 @@
 MestOMatic::Application.routes.draw do
-  
   root :to => "welcome#index"
   
   resource :sessions
-
+  resources :users
   resources :projects do
     resources :deliverables
   end

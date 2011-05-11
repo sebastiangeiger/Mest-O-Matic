@@ -1,0 +1,19 @@
+%h1 Please provide more information
+= form_for @user do |f|
+	= render :partial => 'shared/error_messages', :locals => {:target => @user}
+	%legend Edit your account
+	%ol
+		%li
+			%label First Name
+			= f.text_field :first_name, :value => @user.suggested_first_name
+		%li
+			%label Middle Names
+			= f.text_field :middle_names
+		%li
+			%label Last Name
+			= f.text_field :last_name, :value => @user.suggested_last_name
+		%li
+			%label Email
+			= @user.email
+		%li
+			#button= submit_tag "save"

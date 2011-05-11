@@ -12,6 +12,24 @@
 #  created_at     :datetime
 #  updated_at     :datetime
 #
+require_relative "capitalized_validator"
 
 class User < ActiveRecord::Base
+  include ActiveModel::Validations
+  
+  validates :identifier_url, :presence => true
+  validates_uniqueness_of :identifier_url
+  validates :email, :presence => true
+  validates_uniqueness_of :email
+  validates :first_name, :presence => true, :capitalized => true
+  validates :last_name, :presence => true, :capitalized => true
+  validates :middle_names, :capitalized => true, :allow_nil => true
+  
+  def suggested_first_name
+    first_name || email.split("@").first.split(".").first.capitalize
+  end
+
+  def suggested_last_name
+    last_name || email.split("@").first.split(".").last.capitalize
+  end
 end
