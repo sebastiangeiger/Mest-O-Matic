@@ -6,7 +6,9 @@ MestOMatic::Application.routes.draw do
   resources :projects do
     resources :deliverables
   end
-    
+  
+  match '/logout' => 'sessions#destroy', :as => :logout
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
