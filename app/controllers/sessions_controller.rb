@@ -23,9 +23,9 @@ class SessionsController < ApplicationController
                               :first_name => ax.get_single('http://axschema.org/namePerson/first'),
                               :last_name => ax.get_single('http://axschema.org/namePerson/last'))
         session[:user_id] = user.id
-        if user.first_name.blank?
+        unless user.is_complete?
           flash[:notice] = "Would collect additional user info here"
-          redirect_to(root_path)
+          redirect_to(edit_user_path(user))
         else
           redirect_to(session[:redirect_to] || root_path)
         end

@@ -17,13 +17,13 @@ require_relative "capitalized_validator"
 class User < ActiveRecord::Base
   include ActiveModel::Validations
   
-  validates :identifier_url, :presence => true
-  validates_uniqueness_of :identifier_url
-  validates :email, :presence => true
-  validates_uniqueness_of :email
-  validates :first_name, :presence => true, :capitalized => true
-  validates :last_name, :presence => true, :capitalized => true
-  validates :middle_names, :capitalized => true, :allow_nil => true
+  validates :identifier_url, :presence => true, :uniqueness => true
+  validates :email,          :presence => true, :uniqueness => true
+  validates :first_name,     :presence => true, :on => :update
+  validates :last_name,      :presence => true, :on => :update 
+  validates :first_name,   :allow_nil => true, :capitalized => true
+  validates :last_name,    :allow_nil => true, :capitalized => true
+  validates :middle_names, :allow_nil => true, :capitalized => true
   
   def suggested_first_name
     first_name || email.split("@").first.split(".").first.capitalize
@@ -31,5 +31,9 @@ class User < ActiveRecord::Base
 
   def suggested_last_name
     last_name || email.split("@").first.split(".").last.capitalize
+  end
+  
+  def complete?
+    self.valid?
   end
 end
