@@ -23,7 +23,7 @@ class SessionsController < ApplicationController
                               :first_name => ax.get_single('http://axschema.org/namePerson/first'),
                               :last_name => ax.get_single('http://axschema.org/namePerson/last'))
         session[:user_id] = user.id
-        unless user.is_complete?
+        unless user.complete?
           flash[:notice] = "Would collect additional user info here"
           redirect_to(edit_user_path(user))
         else
@@ -33,7 +33,7 @@ class SessionsController < ApplicationController
         render :action => 'problem'
       end
     else
-      redirect_to new_session_path
+      redirect_to new_sessions_path
     end
   end
   
