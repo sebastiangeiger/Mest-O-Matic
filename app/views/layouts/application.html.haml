@@ -19,6 +19,7 @@
 					- [:notice, :error, :success].each do |key|
 						- unless flash[key].blank?
 							%p{:class => "flash #{key}"}= flash[key]
+					= render :partial => "users/panel"
 				#content
 					= yield
 				#footer

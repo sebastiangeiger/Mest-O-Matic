@@ -1,0 +1,13 @@
+.user_panel
+	- if signed_in?
+		.text
+		=current_user.name
+		#logout
+			%a{:href => "/logout"}
+				logout
+		#clear
+	- elsif(request.path_info=='/login')
+		Not logged in
+	- else
+		%a{:href => "/login"}
+			login

@@ -36,4 +36,8 @@ class User < ActiveRecord::Base
   def complete?
     self.valid?
   end
+  
+  def name 
+    "#{first_name} #{last_name}"
+  end
 end
