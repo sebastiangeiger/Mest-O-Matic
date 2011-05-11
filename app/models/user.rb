@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110509114008
+# Schema version: 20110511191306
 #
 # Table name: users
 #
@@ -11,8 +11,8 @@
 #  email          :string(255)
 #  created_at     :datetime
 #  updated_at     :datetime
+#  type           :string(255)
 #
-require_relative "capitalized_validator"
 
 class User < ActiveRecord::Base
   include ActiveModel::Validations
