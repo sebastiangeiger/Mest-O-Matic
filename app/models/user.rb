@@ -24,7 +24,8 @@ class User < ActiveRecord::Base
   validates :first_name,   :allow_nil => true, :capitalized => true
   validates :last_name,    :allow_nil => true, :capitalized => true
   validates :middle_names, :allow_nil => true, :capitalized => true
-  
+  validates :type,         :allow_nil => true, :valid_user_subtype => true
+
   def suggested_first_name
     first_name || email.split("@").first.split(".").first.capitalize
   end
