@@ -1,10 +1,10 @@
 # == Schema Information
-# Schema version: 20110516195657
+# Schema version: 20110516210728
 #
 # Table name: solutions
 #
 #  id             :integer         not null, primary key
-#  eit_id         :integer
+#  user_id        :integer
 #  deliverable_id :integer
 #  created_at     :datetime
 #  updated_at     :datetime
