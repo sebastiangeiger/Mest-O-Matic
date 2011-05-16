@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110511191306) do
+ActiveRecord::Schema.define(:version => 20110516195657) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -44,6 +44,13 @@ ActiveRecord::Schema.define(:version => 20110511191306) do
     t.date     "start"
     t.date     "end"
     t.integer  "class_of_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "solutions", :force => true do |t|
+    t.integer  "eit_id"
+    t.integer  "deliverable_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

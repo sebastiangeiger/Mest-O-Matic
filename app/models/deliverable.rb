@@ -16,6 +16,8 @@
 class Deliverable < ActiveRecord::Base
   belongs_to :project
   
+  has_many :solutions
+  
   validates :title, :presence => true
   validates_uniqueness_of :title, :scope => :project_id, :case_sensitive => false
   validates :project, :presence => true
