@@ -1,5 +1,5 @@
 %h1 Please provide more information
-= form_for @user do |f|
+= form_for @user, :as => :user, :url => user_path(@user) do |f|
 	= render :partial => 'shared/error_messages', :locals => {:target => @user}
 	%legend Edit your account
 	%ol
