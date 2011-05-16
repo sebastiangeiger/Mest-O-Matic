@@ -5,3 +5,5 @@ tmp/
 public/stylesheets/.sass-cache
 public/stylesheets/layout.css
 .DS_Store
+coverage
+coverage.data
