@@ -1,7 +1,8 @@
 class UsersController < ApplicationController
-  before_filter :find_user
+  before_filter :find_user, :only => [:edit, :update]
   before_filter :ensure_signed_in
-  before_filter :ensure_same_user_as_signed_in_user
+  before_filter :ensure_same_user_as_signed_in_user, :only => [:edit, :update]
+  before_filter :require_staff, :only => [:assign_roles, :unassigned_roles]
   
   def edit
   end
@@ -17,6 +18,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def unassigned_roles
+    @users = User.where(:type => nil)
+  end
+
+  def assign_roles
+    p params[:users].inspect
+  end
 
   private
     def find_user

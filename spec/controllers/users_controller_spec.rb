@@ -58,6 +58,15 @@ describe UsersController do
         response.should render_template("users/edit")
       end
     end
+    
+    describe "GET 'unassigned_roles'" do
+      it "should grant access to a staff member" do
+        @staff = Staff.new
+        controller.expects(:current_user).returns @staff
+        get :unassigned_roles
+        response.should be_success
+      end
+    end
   end
   
   describe "(Functional)" do

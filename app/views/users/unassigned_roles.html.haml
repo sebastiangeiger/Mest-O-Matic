@@ -1,0 +1,16 @@
+%h1 Unassigned Roles
+= form_tag  assign_roles_users_path, :method => :put do
+	%table
+		%tr
+			%th Email
+			%th Role
+			/ %th EIT
+			/ %th Staff
+			/ %th Unassigned
+		- @users.each do |user|
+			= fields_for "users[]", user do |f|
+				%tr
+					%td= user.email
+					%td= f.select(:type, User.types, :include_blank => :true)
+					
+	#button= submit_tag "Assign"

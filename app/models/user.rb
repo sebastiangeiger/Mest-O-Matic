@@ -35,10 +35,14 @@ class User < ActiveRecord::Base
   end
   
   def complete?
-    self.valid?
+    !!self.valid?
   end
   
   def name 
     "#{first_name} #{last_name}"
+  end
+  
+  def User.types
+    %w[Eit Staff]
   end
 end

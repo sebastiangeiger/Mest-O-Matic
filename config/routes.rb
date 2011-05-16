@@ -2,7 +2,12 @@ MestOMatic::Application.routes.draw do
   root :to => "welcome#index"
   
   resource :sessions
-  resources :users
+  resources :users do
+    collection do
+      get 'unassigned_roles'
+      put 'assign_roles'
+    end
+  end
   resources :projects do
     resources :deliverables
   end
