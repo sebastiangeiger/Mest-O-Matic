@@ -19,12 +19,15 @@ class UsersController < ApplicationController
   end
 
   def unassigned_roles
-    @users = User.where(:type => nil)
+    @users = User.all_unassigned
   end
 
   def assign_roles
-    p params[:users].inspect
-    User.update(params[:users].keys, params[:users].values)
+    values = params[:users].values
+    values.each do |v|
+      v[:type] = nil if v[:type] and v[:type].eql?("Unassigned")
+    end
+    User.update(params[:users].keys, values)
     flash[:notice] = "Roles assigned"
     redirect_to unassigned_roles_users_path
   end

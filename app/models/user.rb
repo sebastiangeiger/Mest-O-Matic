@@ -27,7 +27,7 @@ class User < ActiveRecord::Base
   validates :first_name,   :allow_nil => true, :capitalized => true
   validates :last_name,    :allow_nil => true, :capitalized => true
   validates :middle_names, :allow_nil => true, :capitalized => true
-  validates :type,         :allow_nil => true, :valid_user_subtype => true
+  # validates :type,         :allow_nil => true, :valid_user_subtype => true
 
   def suggested_first_name
     first_name || email.split("@").first.split(".").first.capitalize
@@ -41,6 +41,18 @@ class User < ActiveRecord::Base
     !!self.valid?
   end
   
+  def eit?
+    type.eql?("Eit")
+  end
+  
+  def staff?
+    type.eql?("Staff")
+  end
+  
+  def unassigned?
+    type.eql?("Unassigned")
+  end
+  
   def name 
     "#{first_name} #{last_name}"
   end
@@ -49,7 +61,13 @@ class User < ActiveRecord::Base
     %w[Eit Staff Unassigned] 
   end
   
-  def type
-    super || "Unassigned"
+  def User.all_unassigned
+    User.all.select{|user| user.unassigned?}
   end
+  
+  def type
+    return super if super and User.types.include?(super)
+    return "Unassigned"
+  end
+  
 end

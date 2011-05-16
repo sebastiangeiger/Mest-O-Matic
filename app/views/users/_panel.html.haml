@@ -2,6 +2,7 @@
 	- if signed_in?
 		.text
 		=current_user.name
+		= "is #{current_user.type}" unless current_user.unassigned?
 		#logout
 			%a{:href => "/logout"}
 				logout
