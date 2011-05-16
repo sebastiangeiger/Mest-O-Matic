@@ -23,8 +23,9 @@ class UsersController < ApplicationController
   end
 
   def assign_roles
+    # p params.inspect
     values = params[:users].values
-    values.each do |v|
+    values.each do |v| #TODO: Lose this with virtual attributes
       v[:type] = nil if v[:type] and v[:type].eql?("Unassigned")
     end
     User.update(params[:users].keys, values)
@@ -39,8 +40,15 @@ class UsersController < ApplicationController
     
     def ensure_same_user_as_signed_in_user
       unless @user.id.eql?(current_user.id) then
-        flash[:error] = "Not enough priviledges to edit this user. Here is your profile"
+        flash[:error] = "Not enough privileges to edit this user. Here is your profile"
         redirect_to(edit_user_path(current_user))
+      end
+    end
+    
+    def require_staff
+      unless current_user.staff? then
+        flash[:error] = "Not enough privileges"
+        redirect_to root_path
       end
     end
 end
