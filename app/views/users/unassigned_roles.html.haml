@@ -1,16 +1,19 @@
 %h1 Unassigned Roles
-= form_tag  assign_roles_users_path, :method => :put do
-	%table
-		%tr
-			%th Email
-			%th Role
-			/ %th EIT
-			/ %th Staff
-			/ %th Unassigned
-		- @users.each do |user|
-			= fields_for "users[]", user do |f|
-				%tr
-					%td= user.email
-					%td= f.select(:type, User.types, :include_blank => :true)
+- if @users and not @users.empty?
+	= form_tag  assign_roles_users_path, :method => :put do
+		%table
+			%tr
+				%th Email
+				- User.types.each do |t|
+					%th= t
+			- @users.each do |user|
+				= fields_for "users[]", user do |f|
+					%tr
+						%td= user.email
+						- User.types.each do |t|
+							%td= f.radio_button(:type, t, :checked => user.type.eql?(t))
 					
-	#button= submit_tag "Assign"
+		#button= submit_tag "Assign"
+- else
+	No unassigned users at this time.
+	= link_to "back", root_path

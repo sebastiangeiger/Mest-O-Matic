@@ -24,6 +24,9 @@ class UsersController < ApplicationController
 
   def assign_roles
     p params[:users].inspect
+    User.update(params[:users].keys, params[:users].values)
+    flash[:notice] = "Roles assigned"
+    redirect_to unassigned_roles_users_path
   end
 
   private

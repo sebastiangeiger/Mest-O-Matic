@@ -16,6 +16,9 @@
 
 class User < ActiveRecord::Base
   include ActiveModel::Validations
+  def self.attributes_protected_by_default # default is ["id","type"] 
+    ["id"] 
+  end
   
   validates :identifier_url, :presence => true, :uniqueness => true
   validates :email,          :presence => true, :uniqueness => true
@@ -43,6 +46,10 @@ class User < ActiveRecord::Base
   end
   
   def User.types
-    %w[Eit Staff]
+    %w[Eit Staff Unassigned] 
+  end
+  
+  def type
+    super || "Unassigned"
   end
 end
