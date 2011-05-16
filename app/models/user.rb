@@ -16,6 +16,9 @@
 
 class User < ActiveRecord::Base
   include ActiveModel::Validations
+  
+  has_many :solutions
+  
   def self.attributes_protected_by_default # default is ["id","type"] 
     ["id"] 
   end

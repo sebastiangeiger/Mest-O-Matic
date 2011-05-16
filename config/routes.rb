@@ -9,7 +9,9 @@ MestOMatic::Application.routes.draw do
     end
   end
   resources :projects do
-    resources :deliverables
+    resources :deliverables do
+      resources :submissions
+    end
   end
   
   match '/logout' => 'sessions#destroy', :as => :logout

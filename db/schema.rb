@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110516195657) do
+ActiveRecord::Schema.define(:version => 20110516210728) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(:version => 20110516195657) do
   end
 
   create_table "solutions", :force => true do |t|
-    t.integer  "eit_id"
+    t.integer  "user_id"
     t.integer  "deliverable_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -59,6 +59,16 @@ ActiveRecord::Schema.define(:version => 20110516195657) do
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "submissions", :force => true do |t|
+    t.integer  "solution_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "archive_file_name"
+    t.string   "archive_content_type"
+    t.integer  "archive_file_size"
+    t.datetime "archive_updated_at"
   end
 
   create_table "users", :force => true do |t|

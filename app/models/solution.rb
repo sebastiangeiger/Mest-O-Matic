@@ -12,4 +12,7 @@
 
 class Solution < ActiveRecord::Base
   belongs_to :deliverable
+  belongs_to :user
+  has_many :submissions
+  
 end

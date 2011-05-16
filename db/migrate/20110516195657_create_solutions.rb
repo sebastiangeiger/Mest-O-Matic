@@ -1,7 +1,7 @@
 class CreateSolutions < ActiveRecord::Migration
   def self.up
     create_table :solutions do |t|
-      t.references :eit
+      t.references :user
       t.references :deliverable 
       t.timestamps
     end
