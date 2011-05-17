@@ -19,5 +19,6 @@ class Submission < ActiveRecord::Base
   has_attached_file :archive
   
   validates_attachment_presence :archive
+  validates :solution, :presence => true 
   validates_attachment_content_type :archive, :content_type => "application/zip"
 end
