@@ -8,3 +8,4 @@ public/stylesheets/layout.css
 coverage
 coverage.data
 public/system
+spec/fixtures/files
