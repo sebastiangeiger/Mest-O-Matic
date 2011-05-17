@@ -1,5 +1,7 @@
 %h1= "Add a submission for \"#{@deliverable.title}\""
 = form_for @submission, :url => project_deliverable_submissions_path,  :html => { :multipart => true} do |f|
 	= render :partial => 'shared/error_messages', :locals => {:target => @submission}
-	= f.file_field :archive
-	= submit_tag "Create Submission"
+	%ol
+		%li= f.file_field :archive
+		%li
+			#button= submit_tag "Create Submission"

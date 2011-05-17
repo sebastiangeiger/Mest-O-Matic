@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110516210728
+# Schema version: 20110517181144
 #
 # Table name: submissions
 #
@@ -11,6 +11,7 @@
 #  archive_content_type :string(255)
 #  archive_file_size    :integer
 #  archive_updated_at   :datetime
+#  md5_checksum         :string(255)
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
