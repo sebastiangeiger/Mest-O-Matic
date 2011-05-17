@@ -28,4 +28,50 @@ class Deliverable < ActiveRecord::Base
   def start_date_must_be_before_end_date
     errors.add(:end_date, 'must be after start date') if start_date and end_date and start_date >= end_date
   end
+  
+  def current?
+    end_date > DateTime.now
+  end
+  
+  def ended?
+    not current?
+  end
+  
+  def graded?
+    false
+  end
+  
+  def not_graded_yet?
+    not graded?
+  end
+  
+  def submissions(by_user)
+    user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
+    if user_solution
+      user_solution.submissions 
+    else
+      []
+    end
+  end
+  
+  def not_submitted?(by_user)
+    submissions(by_user).empty?
+  end
+  
+  def submitted?(by_user)
+    submissions(by_user).size > 0
+  end
+
+  def latest_submission(by_user)
+    submissions(by_user).sort{|a,b| a.created_at <=> b.created_at}.first
+  end
+  
+  def submitted_on_time?(by_user)
+    latest_submission(by_user).created_at <= end_date
+  end
+  
+  def submitted_too_late?(by_user)
+    submitted?(by_user) and not submitted_on_time?(by_user)
+  end
+  
 end

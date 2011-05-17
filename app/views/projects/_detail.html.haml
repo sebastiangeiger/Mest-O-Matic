@@ -7,5 +7,7 @@
 .timestamps
 	= "Created: #{@project.created_at}"
 	= "Updated: #{@project.updated_at}" unless @project.created_at == @project.updated_at
-%h2= "Deliverables (#{@project.deliverables.count})"
-= render :partial => "deliverables/summary", :collection => @project.deliverables, :as => :deliverable 
+%h2
+	= "Deliverables (#{@project.deliverables.count})"
+	= link_to "+", new_project_deliverable_path(@project) if current_user.staff?
+= render :partial => "deliverables/summary", :collection => @project.deliverables.sort{|a,b| a.end_date <=> b.end_date}, :as => :deliverable

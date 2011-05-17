@@ -1,11 +1,17 @@
-- if deliverable.end_date and deliverable.end_date > Date.new or deliverable.end_date.nil?
-	.deliverable_summary
-		= deliverable.title
+%div{:class => (deliverable.current? ? "current_deliverable" : "past_deliverable")}
+	.summary
+		%span.title
+			= deliverable.title
 		%span.time_label
-			= "(due in #{distance_of_time_in_words_to_now(deliverable.end_date)})" if deliverable.end_date 
-- else
-	.deliverable_summary_past
-		= deliverable.title
-		%span.time_label
-			= "(due #{distance_of_time_in_words_to_now(deliverable.end_date)} ago)" if deliverable.end_date and deliverable.end_date <= Date.new
-		
+			= "(#{time_span_to_due_date_in_words(deliverable)})" if deliverable.end_date
+		%span.status_icon
+			- status_icon(deliverable, current_user)
+		%span.on_time_icon
+			- on_time_icon(deliverable, current_user)
+	.body
+		%ul
+			%li= deliverable.submitted?(current_user) ? "You submitted #{deliverable.submissions(current_user).size} version(s). The latest one on #{deliverable.latest_submission(current_user).created_at}" : "You did not submit a version yet."
+			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
+			%li= "This deliverable was last changed on #{deliverable.updated_at} by TODO"
+		%p
+			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable)

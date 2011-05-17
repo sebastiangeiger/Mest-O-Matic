@@ -203,7 +203,7 @@ form #button{
 	background-color:lightgrey;
 }
 
-.deliverable_summary, .deliverable_summary_past, .new_deliverable_form{
+.current_deliverable, .past_deliverable, .new_deliverable_form{
 	margin-top: 5px;
 	margin-bottom: 5px;
 	border: 1px dashed darkgrey;
@@ -211,8 +211,10 @@ form #button{
 	background-color:lightgrey;
 }
 
-.deliverable_summary_past{
-	text-decoration: line-through;
+.current_deliverable .summary {
+}
+.past_deliverable .summary{
+	color: grey;
 }
 
 .new_deliverable_form{
@@ -223,6 +225,18 @@ form #button{
 	font-style:italic;
 	color: grey;
 	font-size: 80%;
+}
+
+.status_icon, .on_time_icon{
+	float:right;
+}
+
+.body{
+	clear:both;
+}
+
+.past .time_label{
+	color: #b1b1b1;
 }
 
 .field_with_errors{
