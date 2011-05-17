@@ -111,6 +111,7 @@ describe UsersController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
+      @user.stubs(:id).returns 12
     end
     
     describe "GET 'edit'" do

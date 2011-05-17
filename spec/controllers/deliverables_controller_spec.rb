@@ -1,12 +1,14 @@
 require_relative '../spec_helper.rb'
 
 describe DeliverablesController do
-  render_views
+  # render_views
   
   before(:each) do
     @project = Project.new(:title => "Project from database")
     @project.stubs(:id).returns(11)
     Project.stubs(:find).with(11).returns @project
+    @current_user = User.new
+    @current_user.stubs(:id).returns 53
   end
   
   describe "(Authentication)" do
@@ -25,6 +27,7 @@ describe DeliverablesController do
     describe "responding to POST create" do
       it "should grant access to a logged in user" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @current_user
         post :create, :project_id => 11
         response.should_not redirect_to(new_sessions_path)
       end
@@ -39,6 +42,7 @@ describe DeliverablesController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
+      controller.stubs(:current_user).returns @current_user
     end
 
     describe "responding to GET new" do

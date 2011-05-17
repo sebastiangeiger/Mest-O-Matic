@@ -40,8 +40,7 @@ end
 
 
 group :test do
-	gem "rspec", ">= 2"
-	gem "rspec-rails"
+	gem "rspec-rails", "~>2.3"
 	gem "autotest"
 	gem "autotest-growl"
 	gem "mocha"

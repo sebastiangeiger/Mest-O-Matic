@@ -1,7 +1,7 @@
 require_relative '../spec_helper.rb'
 
 describe ProjectsController do
-  render_views
+  # render_views
 
   before(:each) do
     @project = Project.new(:title => "New Project")
@@ -73,6 +73,9 @@ describe ProjectsController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
+      @current_user = User.new
+      @current_user.stubs(:id).returns 13
+      controller.stubs(:current_user).returns @current_user
     end
 
     describe "responding to GET index" do
