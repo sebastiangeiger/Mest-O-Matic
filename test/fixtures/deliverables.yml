@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110508194142
+# Schema version: 20110517132702
 #
 # Table name: deliverables
 #
@@ -11,6 +11,7 @@
 #  project_id  :integer
 #  created_at  :datetime
 #  updated_at  :datetime
+#  author_id   :integer
 #
 
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html

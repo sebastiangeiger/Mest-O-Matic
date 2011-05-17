@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110508194142
+# Schema version: 20110517132702
 #
 # Table name: deliverables
 #
@@ -11,18 +11,21 @@
 #  project_id  :integer
 #  created_at  :datetime
 #  updated_at  :datetime
+#  author_id   :integer
 #
 
 class Deliverable < ActiveRecord::Base
   belongs_to :project
   
   has_many :solutions
+  belongs_to :author, :class_name => "User", :foreign_key => "author_id"
   
   validates :title, :presence => true
   validates_uniqueness_of :title, :scope => :project_id, :case_sensitive => false
   validates :project, :presence => true
   validates :start_date, :presence => true
   validates :end_date, :presence => true
+  validates :author, :presence => true
   validate :start_date_must_be_before_end_date
   
   def start_date_must_be_before_end_date

@@ -12,6 +12,7 @@ class DeliverablesController < ApplicationController
 
   def create
     @deliverable = Deliverable.new(params[:deliverable])
+    @deliverable.author_id = current_user.id
     @project.deliverables << @deliverable
     if params[:commit].eql?("cancel") or @deliverable.save
       flash[:notice] = "Successfully created the deliverable #{@deliverable.title}" if @deliverable.save

@@ -12,6 +12,6 @@
 		%ul
 			%li= deliverable.submitted?(current_user) ? "You submitted #{deliverable.submissions(current_user).size} version(s). The latest one on #{deliverable.latest_submission(current_user).created_at}" : "You did not submit a version yet."
 			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
-			%li= "This deliverable was last changed on #{deliverable.updated_at} by TODO"
+			%li= "This deliverable was last changed on #{deliverable.updated_at} by #{deliverable.author.name}"
 		%p
 			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable)
