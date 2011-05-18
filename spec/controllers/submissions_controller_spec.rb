@@ -14,7 +14,7 @@ describe SubmissionsController do
     @current_user.stubs(:id).returns 53
     @valid_submission = Submission.new
     @valid_submission.stubs(:valid?).returns true
-    
+    @zipFile = File.new(Rails.root + 'spec/fixtures/files/zip_file.zip')    
   end
   
   describe "(Authentication)" do
@@ -69,9 +69,8 @@ describe SubmissionsController do
         assigns[:deliverable].should == @deliverable
       end
       it "should create a new submission object according to the params" do
-        @zipFile = File.new(Rails.root + 'spec/fixtures/files/project_3.zip')
         post :create, :project_id => 10, :deliverable_id => 11, :submission => {:archive => @zipFile} 
-        assigns[:submission].archive.original_filename.should == "project_3.zip"
+        assigns[:submission].archive.original_filename.should == "zip_file.zip"
       end
       it "should redirect to the deliverables project path if save was successful" do
         Submission.expects(:new).returns @valid_submission

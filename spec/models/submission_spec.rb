@@ -4,10 +4,10 @@ describe Submission do
   before(:each) do
     @solutionA = Solution.new
     @solutionB = Solution.new
-    @zipFile = File.new(Rails.root + 'spec/fixtures/files/project_3.zip')
-    @zipFile_same = File.new(Rails.root + 'spec/fixtures/files/project_3_same.zip')
-    @zipFile_different = File.new(Rails.root + 'spec/fixtures/files/project_3_different.zip')
-    @pdfFile = File.new(Rails.root + 'spec/fixtures/files/Analyse-Elastizitaet.pdf')
+    @zipFile = File.new(Rails.root + 'spec/fixtures/files/zip_file.zip')
+    @zipFile_same = File.new(Rails.root + 'spec/fixtures/files/zip_file_same.zip')
+    @zipFile_different = File.new(Rails.root + 'spec/fixtures/files/zip_file_different.zip')
+    @pdfFile = File.new(Rails.root + 'spec/fixtures/files/pdf_file.pdf')
   end
   it "should create a submission with a solution and an attached archive of mime type 'application/zip'" do
     Submission.create(:solution => @solutionA, :archive => @zipFile).should be_valid
