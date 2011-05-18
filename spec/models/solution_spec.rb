@@ -33,4 +33,28 @@ describe Solution do
     Solution.create(:deliverable => @deliverable, :user => @user).should be_valid
     Solution.create(:deliverable => @deliverable, :user => @user).should_not be_valid        
   end
+  
+  describe "#find_or_create" do
+    before(:each) do
+      @user = User.new
+      @user.stubs(:id).returns(13)
+      @deliverable = Deliverable.new
+      @deliverable.stubs(:id).returns(14)
+      @solution = Solution.new      
+    end
+    it "should find a record if there is an existing one" do
+      @solution.stubs(:deliverable_id).returns(14)
+      @solution.stubs(:user_id).returns(13)
+      Solution.expects(:all).returns [@solution]
+      Solution.find_or_create(:deliverable => @deliverable, :user => @user).should == @solution
+    end
+    it "should create a record if there is no existing one" do
+      Solution.expects(:all).returns []
+      new_solution = Solution.find_or_create(:deliverable => @deliverable, :user => @user)
+      new_solution.should_not be_nil
+      new_solution.should_not be_new_record
+      new_solution.user.should == @user
+      new_solution.deliverable.should == @deliverable
+    end
+  end
 end
