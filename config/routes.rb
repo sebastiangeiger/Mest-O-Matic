@@ -1,4 +1,10 @@
 MestOMatic::Application.routes.draw do
+  get "teams/new"
+
+  get "teams/create"
+
+  get "teams/index"
+
   root :to => "welcome#index"
   
   resource :sessions
@@ -12,6 +18,7 @@ MestOMatic::Application.routes.draw do
     resources :deliverables do
       resources :submissions
     end
+    resources :teams
   end
   
   match '/logout' => 'sessions#destroy', :as => :logout
