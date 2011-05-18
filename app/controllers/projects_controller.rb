@@ -11,6 +11,7 @@ class ProjectsController < ApplicationController
   
   def create
     @project = Project.new(params[:project])
+    @project.type = params[:project][:type] if params[:project] and params[:project][:type] #TODO: why do I need to set this?
     if @project.save
       redirect_to project_path(@project), :notice => "Successfully created the project #{@project.title}"
     else

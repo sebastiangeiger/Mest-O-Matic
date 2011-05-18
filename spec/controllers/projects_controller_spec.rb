@@ -120,6 +120,12 @@ describe ProjectsController do
           post :create, :project => {:title => "Some Project"}
           assigns[:project].title.should == "Some Project"
         end
+        
+        it "should pass the type params to the project item with valid params" do
+          post :create, :project => {:title => "Some Quiz", :type => "Quiz"}
+          assigns[:project].type.should == "Quiz"
+        end
+        
       end
       describe "with invalid parameters" do
         it "should render the new template with invalid params" do

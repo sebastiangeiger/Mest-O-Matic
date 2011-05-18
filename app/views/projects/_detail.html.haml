@@ -1,4 +1,4 @@
-%h1= "Project \"#{@project.title}\""
+%h1= "#{uncamel(@project.type)} \"#{@project.title}\""
 .semester= "Class of #{@project.semester.class_of.year}" if @project.semester
 .description= @project.description
 .subject= "Subject: #{@project.subject.title}" if @project.subject

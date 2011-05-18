@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110517181144) do
+ActiveRecord::Schema.define(:version => 20110518121401) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -38,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20110517181144) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "subject_id"
+    t.string   "type"
   end
 
   create_table "semesters", :force => true do |t|

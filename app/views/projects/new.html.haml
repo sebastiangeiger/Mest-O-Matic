@@ -4,6 +4,11 @@
 	%legend Create a new Project
 	%ol
 		%li
+			%label Type
+			- Project.types.each do |t|
+				= f.radio_button :type, t
+				= t
+		%li
 			%label Title
 			= f.text_field :title
 		%li

@@ -1,5 +1,5 @@
 # == Schema Information
-# Schema version: 20110505105605
+# Schema version: 20110518121401
 #
 # Table name: projects
 #
@@ -12,9 +12,11 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  subject_id  :integer
+#  type        :string(255)
 #
 
 class Project < ActiveRecord::Base
+  SUBTYPES = %w[Assignment Quiz TeamProject]
   has_many :deliverables
   
   belongs_to :semester
@@ -23,4 +25,9 @@ class Project < ActiveRecord::Base
   validates :title, :presence => true
   validates :start, :presence => true
   validates :semester, :presence => true
+  validates :type, :presence => true, :inclusion => SUBTYPES
+  
+  def Project.types
+    SUBTYPES
+  end
 end

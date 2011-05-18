@@ -1,0 +1,2 @@
+class TeamProject < Project
+end

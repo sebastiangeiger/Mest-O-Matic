@@ -3,4 +3,4 @@
 	= link_to "+", new_project_path if current_user.staff?
 %ul
 	- @projects.each do |project|
-		%li= link_to project.title, project
+		%li= link_to project.title, project_path(project) #Needed for STI

@@ -1,0 +1,2 @@
+class Quiz < Project
+end
