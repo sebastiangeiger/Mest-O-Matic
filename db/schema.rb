@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110518175912) do
+ActiveRecord::Schema.define(:version => 20110518183857) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -98,6 +98,7 @@ ActiveRecord::Schema.define(:version => 20110518175912) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
+    t.integer  "class_of_id"
   end
 
   add_index "users", ["identifier_url"], :name => "index_users_on_identifier_url", :unique => true

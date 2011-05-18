@@ -11,6 +11,7 @@
 
 class ClassOf < ActiveRecord::Base
   has_many :semesters
+  has_many :eits
   
   validates :year, :uniqueness => true
   validates :year, :presence => true
