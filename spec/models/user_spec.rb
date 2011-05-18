@@ -88,6 +88,12 @@ describe User do
       @user.should be_valid
     end
 
+    it "should update a User with a double first name, last name" do
+      @user.first_name = "Kevin-Prince"
+      @user.last_name = "Boateng"
+      @user.should be_valid
+    end
+
     it "should update a User with a first name, a last name and middle names" do
       @user.first_name = "Max"
       @user.last_name = "Moore"
