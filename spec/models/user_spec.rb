@@ -137,10 +137,11 @@ describe User do
       @user.should_not be_valid    
     end
     
-    it "should update a User with a first name, last name and the type Eit" do
+    it "should update a User with a first name, last name, the type Eit and a ClassOf association" do
       @user.first_name = "Max"
       @user.last_name = "Moore"
       @user.type = "Eit"
+      @user.class_of = ClassOf.new
       @user.should be_valid
     end
 
@@ -158,12 +159,12 @@ describe User do
       @user.should be_valid
     end    
 
-    it "should not update a User with a first name, last name and a type that is not Eit or Staff" #do
-      # @user.first_name = "Max"
-      # @user.last_name = "Moore"
-      # @user.type = "Nonsense"
-      # @user.should_not be_valid
-    # end    
+    it "should not update a User with a first name, last name and a type that is not Eit or Staff" do
+      @user.first_name = "Max"
+      @user.last_name = "Moore"
+      @user.type = "Nonsense"
+      @user.should_not be_valid
+    end    
 
   end
   

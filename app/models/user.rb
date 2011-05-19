@@ -17,8 +17,10 @@
 
 class User < ActiveRecord::Base
   include ActiveModel::Validations
+  SUBTYPES = %w[Eit Staff] 
   
   has_many :solutions
+  belongs_to :class_of
   
   def self.attributes_protected_by_default # default is ["id","type"] 
     ["id"] 
@@ -31,8 +33,9 @@ class User < ActiveRecord::Base
   validates :first_name,   :allow_nil => true, :capitalized => true
   validates :last_name,    :allow_nil => true, :capitalized => true
   validates :middle_names, :allow_nil => true, :capitalized => true
-  # validates :type,         :allow_nil => true, :valid_user_subtype => true
-
+  validates :type,         :allow_nil => true, :inclusion => SUBTYPES
+  validates_presence_of :class_of, :if => :eit?
+  
   def suggested_first_name
     first_name || email.split("@").first.split(".").first.capitalize
   end
@@ -54,7 +57,7 @@ class User < ActiveRecord::Base
   end
   
   def unassigned?
-    type.eql?("Unassigned")
+    type == nil
   end
   
   def name 
@@ -62,16 +65,24 @@ class User < ActiveRecord::Base
   end
   
   def User.types
-    %w[Eit Staff Unassigned] 
+    SUBTYPES
+  end
+  
+  def User.grouped_types
+    ts = SUBTYPES.reject{|t| t.eql?("Eit")}
+    ClassOf.all.each do |c|
+      ts << "Eit - Class of #{c.year}"
+    end
+    return ts.sort
   end
   
   def User.all_unassigned
     User.all.select{|user| user.unassigned?}
   end
   
-  def type
-    return super if super and User.types.include?(super)
-    return "Unassigned"
-  end
+  # def type
+  #   return super if super and User.types.include?(super)
+  #   return "Unassigned"
+  # end
   
 end

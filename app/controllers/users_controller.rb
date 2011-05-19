@@ -20,17 +20,23 @@ class UsersController < ApplicationController
 
   def unassigned_roles
     @users = User.all_unassigned
+    # @users = User.all
   end
 
   def assign_roles
-    # p params.inspect
-    values = params[:users].values
-    values.each do |v| #TODO: Lose this with virtual attributes
-      v[:type] = nil if v[:type] and v[:type].eql?("Unassigned")
+    params[:users].each_pair do |user_id, hash|
+      if hash[:type] and matchdata = hash[:type].match(/Eit - Class of (\d{4})/) then
+        hash[:type] = "Eit"
+        hash[:class_of] = ClassOf.find_by_year(matchdata[1].to_i)
+      end
     end
-    User.update(params[:users].keys, values)
-    flash[:notice] = "Roles assigned"
-    redirect_to unassigned_roles_users_path
+    @users = User.update(params[:users].keys, params[:users].values).reject{|u| u.errors.empty?}
+    if @users.empty?
+      flash[:notice] = "Roles assigned"
+      redirect_to unassigned_roles_users_path
+    else
+      render :action => "unassigned_roles"
+    end
   end
 
   private

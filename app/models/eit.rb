@@ -19,4 +19,6 @@ class Eit < User
   has_many :team_memberships
   has_many :teams, :through => :team_memberships 
   belongs_to :class_of
+  validates :class_of, :presence => true
+  
 end
