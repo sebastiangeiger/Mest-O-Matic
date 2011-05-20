@@ -9,7 +9,7 @@
 				= fields_for "users[]", user do |f|
 					%tr
 						%td= user.email
-						%td= f.select(:type, User.grouped_types, :include_blank => true)
+						%td= f.select(:role, User.all_roles, :include_blank => true)
 					
 		#button= submit_tag "Assign"
 - else

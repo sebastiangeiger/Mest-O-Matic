@@ -184,18 +184,33 @@ describe UsersController do
     end
 
     describe "PUT 'assign_roles'" do
-      it "should call update on users with the parameters provided" do
+      it "should call update on users with the parameters provided and go to the unassigned_roles page if all users are valid" do
+        User.any_instance.stubs(:errors).returns []
         controller.stubs(:current_user).returns @staff
-        User.expects(:update).with(["3","4"], [{"type" => "Staff"}, {"type" => "Eit"}])
-        put :assign_roles, :users => {"3" => {:type => "Staff"}, "4" => {:type => "Eit"}}
+        User.expects(:update).with(["3","4"], [{"role" => "Staff"}, {"role" => "Eit (Class of 2012)"}])
+        put :assign_roles, :users => {"3" => {:role => "Staff"}, "4" => {:role => "Eit (Class of 2012)"}}
         response.should redirect_to("/users/unassigned_roles")
       end
 
-      it "should filter Unassigned type out before updating users" do
+      it "should call update on users with the parameters provided and render the unassigned_roles page if one of the users is not valid" do
+        fail_user = User.new
+        fail_user.stubs(:errors).returns ["some error"]
         controller.stubs(:current_user).returns @staff
-        User.expects(:update).with(["3","4"], [{"type" => nil}, {"type" => "Eit"}])
-        put :assign_roles, :users => {"3" => {:type => "Unassigned"}, "4" => {:type => "Eit"}}
-        response.should redirect_to("/users/unassigned_roles")
+        User.expects(:update).with(["3"], [{"role" => "Staff"}]).returns [fail_user]
+        put :assign_roles, :users => {"3" => {:role => "Staff"}}
+        response.should render_template("users/unassigned_roles")
+      end
+
+      it "should call update on users and retry for users that could not be saved" do
+        success_user = User.new
+        success_user.stubs(:errors).returns []
+        fail_user = User.new
+        fail_user.stubs(:errors).returns ["Fail"]
+        controller.stubs(:current_user).returns @staff
+        User.expects(:update).with(["3", "4"], [{"role" => "Staff"}, {"role" => "Nonsense"}]).returns [success_user, fail_user]
+        put :assign_roles, :users => {"3" => {:role => "Staff"}, "4" => {:role => "Nonsense"}}
+        assigns[:users].should == [fail_user]
+        response.should render_template("users/unassigned_roles")
       end
     end
 

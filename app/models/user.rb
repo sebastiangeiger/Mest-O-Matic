@@ -68,21 +68,32 @@ class User < ActiveRecord::Base
     SUBTYPES
   end
   
-  def User.grouped_types
-    ts = SUBTYPES.reject{|t| t.eql?("Eit")}
-    ClassOf.all.each do |c|
-      ts << "Eit - Class of #{c.year}"
-    end
-    return ts.sort
-  end
-  
   def User.all_unassigned
     User.all.select{|user| user.unassigned?}
   end
   
-  # def type
-  #   return super if super and User.types.include?(super)
-  #   return "Unassigned"
-  # end
+  def role=(role_name)
+    if role_name and matchdata = role_name.match(/Eit \(Class of (\d{4})\)/) then
+      self.type = "Eit"
+      self.class_of = ClassOf.find_by_year(matchdata[1].to_i)
+    else
+      self.type = role_name
+    end
+  end
   
+  def role
+    if type.eql?("Eit") then
+      "Eit (Class of #{class_of.year})"
+    else
+      type
+    end
+  end
+  
+  def User.all_roles
+    ts = SUBTYPES.reject{|t| t.eql?("Eit")}
+    ClassOf.all.each do |c|
+      ts << "Eit (Class of #{c.year})"
+    end
+    return ts.sort
+  end
 end

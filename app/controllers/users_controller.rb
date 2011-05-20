@@ -24,12 +24,6 @@ class UsersController < ApplicationController
   end
 
   def assign_roles
-    params[:users].each_pair do |user_id, hash|
-      if hash[:type] and matchdata = hash[:type].match(/Eit - Class of (\d{4})/) then
-        hash[:type] = "Eit"
-        hash[:class_of] = ClassOf.find_by_year(matchdata[1].to_i)
-      end
-    end
     @users = User.update(params[:users].keys, params[:users].values).reject{|u| u.errors.empty?}
     if @users.empty?
       flash[:notice] = "Roles assigned"
