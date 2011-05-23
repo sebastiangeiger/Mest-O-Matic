@@ -16,4 +16,8 @@ class ClassOf < ActiveRecord::Base
   validates :year, :uniqueness => true
   validates :year, :presence => true
   validates :year, :numericality => true
+  
+  def to_s
+    "Class of #{year}"
+  end
 end

@@ -12,6 +12,15 @@
 #
 
 class TeamMembership < ActiveRecord::Base
+  include ActiveModel::Validations
+  
   belongs_to :team
   belongs_to :eit
+
+  validates :eit, :presence => true 
+  validates :team, :presence => true
+  
+  validates_uniqueness_of :eit_id, :scope => :team_id
+  validates_with OnlyOneMembershipPerProjectValidator
+    
 end

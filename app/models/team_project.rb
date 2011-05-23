@@ -17,4 +17,17 @@
 
 class TeamProject < Project
   has_many :teams
+  has_one :class_of, :through => :semester 
+
+  def assigned_eits
+    teams.inject([]){|assigned, team| assigned |= team.eits}
+   end
+
+  def unassigned_eits
+    class_of.eits.reject{|eit| assigned_eits.include?(eit)}
+  end
+  
+  def teams_for_eit(eit)
+    teams.select{|team| team.eits.include?(eit)}
+  end
 end

@@ -13,5 +13,8 @@
 class Team < ActiveRecord::Base
   belongs_to :team_project
   has_many :team_memberships
-  has_many :eits, :through => :team_memberships 
+  has_many :eits, :through => :team_memberships
+  
+  validates :team_project, :presence => true
+  # validates_length_of :team_memberships, :minimum => 1
 end
