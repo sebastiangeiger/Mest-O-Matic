@@ -1,6 +1,6 @@
 class OnlyOneMembershipPerProjectValidator < ActiveModel::Validator
   def validate(teammembership)
-    if teammembership.team then
+    if teammembership and teammembership.team and teammembership.team.team_project then
       eit = teammembership.eit
       team = teammembership.team
       team_project = team.team_project
