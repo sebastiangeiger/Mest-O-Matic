@@ -2,6 +2,7 @@ class TeamsController < ApplicationController
   before_filter :ensure_signed_in
   before_filter :require_staff, :only => [:new, :create]
   before_filter :load_project
+  before_filter :ensure_team_project
   
   def new
     @team = Team.new
@@ -34,4 +35,10 @@ class TeamsController < ApplicationController
       end
     end
     
+    def ensure_team_project
+      unless @project.is_a? TeamProject then
+        flash[:notice] = "This project is an individual #{@project.type.capitalize}, it does not have teams."
+        redirect_to project_path(@project)
+      end
+    end
 end

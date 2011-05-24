@@ -66,14 +66,12 @@ describe TeamsController do
     describe "GET 'index'" do
       it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
-        # controller.expects(:current_user).returns @staff
         get :index, :project_id => 11
         response.should render_template("teams/index")
       end
 
       it "should grant access to an eit" do
         controller.expects(:signed_in?).returns true
-        # controller.expects(:current_user).returns @eit
         get :index, :project_id => 11
         response.should render_template("teams/index")
       end
@@ -92,6 +90,11 @@ describe TeamsController do
       controller.stubs(:current_user).returns @staff
     end
     describe "GET 'new'" do 
+      it "should render the new template for a Team Project" do
+        Project.stubs(:where).with(:id => 11).returns [@team_project]
+        get :new, :project_id => 11
+        response.should render_template("teams/new")
+      end
       it "should load a new Team instance" do
         @team = Team.new
         Team.expects(:new).returns @team
@@ -105,8 +108,34 @@ describe TeamsController do
         get :new, :project_id => 11
         assigns[:project].should == @team_project
       end
-      it "should redirect to the assignment page if the project is of subtype assignment"
-      it "should redirect to the quiz page if the project is of subtype quiz"
+      it "should build three TeamMemberships if there are three unassigned eits for the project" do
+        @team_project.stubs(:unassigned_eits).returns [Eit.new, Eit.new, Eit.new]
+        Project.stubs(:where).with(:id => 11).returns [@team_project]
+        get :new, :project_id => 11
+        assigns[:team].team_memberships.size.should == 3        
+      end
+      it "should build five TeamMemberships if there are seven unassigned eits for the project" do
+        @team_project.stubs(:unassigned_eits).returns [Eit.new, Eit.new, Eit.new, Eit.new, Eit.new, Eit.new, Eit.new]
+        Project.stubs(:where).with(:id => 11).returns [@team_project]
+        get :new, :project_id => 11
+        assigns[:team].team_memberships.size.should == 5        
+      end
+      it "should redirect to the assignment page if the project is of subtype assignment" do
+        assignment = Assignment.new
+        assignment.stubs(:id).returns 12
+        Project.stubs(:where).with(:id => 12).returns [assignment]
+        get :new, :project_id => 12
+        flash[:notice].should_not be_empty
+        response.should redirect_to("/projects/12")
+      end
+      it "should redirect to the quiz page if the project is of subtype quiz" do
+        quiz = Quiz.new
+        quiz.stubs(:id).returns 13
+        Project.stubs(:where).with(:id => 13).returns [quiz]
+        get :new, :project_id => 13
+        flash[:notice].should_not be_empty
+        response.should redirect_to("/projects/13")
+      end
     end
   
     describe "POST 'create'" do
