@@ -21,4 +21,11 @@ class Eit < User
   belongs_to :class_of
   validates :class_of, :presence => true
   
+  def name
+    "#{first_name} #{last_name}"
+  end
+  
+  def to_s
+    name
+  end
 end

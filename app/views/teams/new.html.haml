@@ -1,1 +1,15 @@
-%h1= "Create Team for #{@project}"
+%h1
+	Create Team for
+	= link_to @project.title, project_path(@project)
+%h2= @project.class_of
+%h3 Existing Teams
+%ul
+	= render :partial => "summary", :collection => @project.teams, :as => :team
+%h3 New Team
+- form_for @team, :url => project_teams_path(@project) do |f|
+	= render :partial => 'shared/error_messages', :locals => {:target => @team}
+	= f.fields_for :team_memberships do |eits_f|
+		#member
+			= eits_f.label :eit_id, "Member"
+			= eits_f.collection_select :eit_id, @project.unassigned_eits, :id, :name, :include_blank => true
+	#button= submit_tag "Create Team"

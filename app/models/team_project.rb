@@ -30,4 +30,8 @@ class TeamProject < Project
   def teams_for_eit(eit)
     teams.select{|team| team.eits.include?(eit)}
   end
+  
+  def has_empty_teams?
+    teams.select{|team| team.eits.empty?}.size > 0
+  end
 end

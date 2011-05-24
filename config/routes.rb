@@ -1,10 +1,4 @@
 MestOMatic::Application.routes.draw do
-  get "teams/new"
-
-  get "teams/create"
-
-  get "teams/index"
-
   root :to => "welcome#index"
   
   resource :sessions

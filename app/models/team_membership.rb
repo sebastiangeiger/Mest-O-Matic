@@ -14,7 +14,7 @@
 class TeamMembership < ActiveRecord::Base
   include ActiveModel::Validations
   
-  belongs_to :team
+  belongs_to :team, :inverse_of => :team_memberships
   belongs_to :eit
 
   validates :eit, :presence => true 
