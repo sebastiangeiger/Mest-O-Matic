@@ -14,13 +14,10 @@ class TeamsController < ApplicationController
     @project.teams << @team
     if @team.save
       flash[:notice] = "Created new team"
-      redirect_to project_teams_path(@project)
+      redirect_to project_path(@project)
     else
       render :action => "new"
     end
-  end
-
-  def index
   end
 
   private
