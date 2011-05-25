@@ -45,5 +45,6 @@ group :test do
 	gem "autotest-growl"
 	gem "mocha"
   gem 'cover_me', '>= 1.0.0.rc6'
+  gem 'capybara', :git => 'git@github.com:/jnicklas/capybara.git'
 end
 
