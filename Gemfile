@@ -36,6 +36,7 @@ gem 'ruby-openid-apps-discovery'
 group :development do
   gem 'annotate-models'
   gem 'mongrel', '1.2.0.pre2'         #getting WEBrick::HTTPStatus::RequestURITooLarge in conjunction with openid
+  gem "rspec-rails", "~>2.3"
 end
 
 
@@ -44,7 +45,9 @@ group :test do
 	gem "autotest"
 	gem "autotest-growl"
 	gem "mocha"
-  gem 'cover_me', '>= 1.0.0.rc6'
-  gem 'capybara', :git => 'git@github.com:/jnicklas/capybara.git'
+	gem 'cover_me', '>= 1.0.0.rc6'
+	gem 'capybara', :git => 'git@github.com:/jnicklas/capybara.git'
+ 	gem "launchy"
 end
+
 
