@@ -46,4 +46,14 @@ class SessionsController < ApplicationController
     session[:redirect_to] = nil
     redirect_to root_path
   end
+  
+  def testlogin
+    if Rails.env=="test" then
+      session[:user_id] = params[:id]
+      flash[:notice] = "Testlogin"
+    else
+      flash[:error] = "Only available in test environment"
+    end
+    redirect_to root_path
+  end
 end

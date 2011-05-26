@@ -18,6 +18,8 @@ MestOMatic::Application.routes.draw do
   match '/logout' => 'sessions#destroy', :as => :logout
   match '/login' => 'sessions#new', :as => :login
 
+  match '/testlogin/:id' => 'sessions#testlogin'
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
