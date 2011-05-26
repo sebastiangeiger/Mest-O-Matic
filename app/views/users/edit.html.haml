@@ -4,13 +4,13 @@
 	%legend Edit your account
 	%ol
 		%li
-			%label First Name
+			= f.label :first_name, "First Name"
 			= f.text_field :first_name, :value => @user.suggested_first_name
 		%li
-			%label Middle Names
+			= f.label :middle_names, "Middle Names"
 			= f.text_field :middle_names
 		%li
-			%label Last Name
+			= f.label :last_name, "Last Name"
 			= f.text_field :last_name, :value => @user.suggested_last_name
 		%li
 			%label Email

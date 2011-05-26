@@ -9,3 +9,4 @@ coverage
 coverage.data
 public/system
 test/
+*.swp
