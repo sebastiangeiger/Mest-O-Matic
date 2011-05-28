@@ -1,11 +1,8 @@
 class DeliverablesController < ApplicationController
   before_filter :load_project
   before_filter :ensure_signed_in
+  before_filter :require_staff
   
-  def load_project
-    @project = Project.find(params[:project_id])
-  end
-
   def new
     @deliverable = Deliverable.new
   end
@@ -23,4 +20,8 @@ class DeliverablesController < ApplicationController
     end
   end
 
+  private
+    def load_project
+      @project = Project.find(params[:project_id])
+    end
 end

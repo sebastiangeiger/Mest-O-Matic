@@ -18,10 +18,12 @@
 class Project < ActiveRecord::Base
   SUBTYPES = %w[Assignment Quiz TeamProject]
   has_many :deliverables
-  
+
   belongs_to :semester
   belongs_to :subject
   
+  has_one  :class_of, :through => :semester  
+
   validates :title, :presence => true
   validates :start, :presence => true
   validates :semester, :presence => true
@@ -29,5 +31,19 @@ class Project < ActiveRecord::Base
   
   def Project.types
     SUBTYPES
+  end
+
+  def Project.by_class(class_of)
+    Project.all.select{|p| p.semester.class_of==class_of}
+  end
+
+  def Project.for_user(user)
+    if user.eit? then
+      @projects = Project.by_class(user.class_of)
+    elsif user.staff? then
+      @projects = Project.all 
+    else
+      @projects = []
+    end
   end
 end

@@ -7,16 +7,34 @@ describe DeliverablesController do
     @project = Project.new(:title => "Project from database")
     @project.stubs(:id).returns(11)
     Project.stubs(:find).with(11).returns @project
-    @current_user = User.new
-    @current_user.stubs(:id).returns 53
+    @user = User.new
+    @user.stubs(:id).returns 53
+    @staff = Staff.new
+    @staff.stubs(:id).returns 73
+    @eit = Eit.new
+    @eit.stubs(:id).returns 63
+    request.env["HTTP_REFERER"] = "navigate back"
   end
   
   describe "(Authentication)" do
     describe "responding to GET new" do
-      it "should grant access to a logged in user" do
+      it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
+        controller.expects(:current_user).returns @staff
         get :new, :project_id => 11
         response.should render_template("deliverables/new")
+      end
+      it "should not grant access to an Eit" do
+        controller.expects(:signed_in?).returns true        
+        controller.expects(:current_user).returns @eit
+        get :new, :project_id => 11
+        response.should redirect_to("navigate back")
+      end
+      it "should not grant access to an User" do
+        controller.expects(:signed_in?).returns true        
+        controller.expects(:current_user).returns @user
+        get :new, :project_id => 11
+        response.should redirect_to("navigate back")
       end
       it "should not grant access to a not logged in user" do
         controller.expects(:signed_in?).returns false        
@@ -25,14 +43,29 @@ describe DeliverablesController do
       end
     end
     describe "responding to POST create" do
-      it "should grant access to a logged in user" do
+      it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
-        controller.stubs(:current_user).returns @current_user
+        controller.expects(:current_user).at_least(1).returns @staff
+        Deliverable.any_instance.stubs(:valid?).returns true
         post :create, :project_id => 11
-        response.should_not redirect_to(new_sessions_path)
+        flash[:notice].should_not be_empty
+        response.should redirect_to("/projects/11")
+      end
+      it "should not grant access to an Eit" do
+        controller.expects(:signed_in?).returns true        
+        controller.expects(:current_user).returns @eit
+        post :create, :project_id => 11
+        flash[:error].should_not be_empty
+        response.should redirect_to("navigate back")
+      end
+      it "should not grant access to an User" do
+        controller.expects(:signed_in?).returns true        
+        controller.expects(:current_user).returns @user
+        post :create, :project_id => 11
+        response.should redirect_to("navigate back")
       end
       it "should not grant access to a not logged in user" do
-        controller.expects(:signed_in?).returns false
+        controller.expects(:signed_in?).returns false        
         post :create, :project_id => 11
         response.should redirect_to(new_sessions_path)
       end
@@ -42,7 +75,7 @@ describe DeliverablesController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
-      controller.stubs(:current_user).returns @current_user
+      controller.stubs(:current_user).returns @staff
     end
 
     describe "responding to GET new" do

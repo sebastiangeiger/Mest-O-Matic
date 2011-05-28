@@ -6,25 +6,25 @@
 		%li
 			%label Type
 			- Project.types.each do |t|
+				= f.label "type_#{t.downcase}", t
 				= f.radio_button :type, t
-				= t
 		%li
-			%label Title
+			= f.label :title
 			= f.text_field :title
 		%li
-			%label Description
+			= f.label :description
 			= f.text_field :description
 		%li
-			%label Subject
+			= f.label :subject
 			= collection_select(:project, :subject_id, Subject.all, :id, :title, :include_blank => true)
 		%li
-			%label Semester
+			= f.label :semester
 			= collection_select(:project, :semester_id, Semester.all, :id, :title)
 		%li
-			%label Start date
+			= f.label :start, "Start date"
 			= date_select :project, :start, :start_year => Time.now.year - 1
 		%li
-			%label End date
+			= f.label :end, "End date"
 			= date_select :project, :end, :include_blank => true, :start_year => Time.now.year - 1
 		%li
 			#button= submit_tag "create"

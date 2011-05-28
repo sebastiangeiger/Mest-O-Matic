@@ -35,4 +35,8 @@ describe Project do
     p.type = "NoTypeAtAll"
     p.should_not be_valid
   end
+
+  it "should return an empty project list for a user"
+  it "should return a list with one element if the user is an eit and there are two projects where only one project applies to the eit"
+  it "should return a list with two elements of the user is a staff member"
 end

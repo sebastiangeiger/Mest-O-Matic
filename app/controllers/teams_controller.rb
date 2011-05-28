@@ -25,13 +25,6 @@ class TeamsController < ApplicationController
       @project = Project.where(:id => params[:project_id]).first
     end
     
-    def require_staff
-      unless current_user.staff? then
-        flash[:error] = "Not enough privileges"
-        redirect_to :back
-      end
-    end
-    
     def ensure_team_project
       unless @project.is_a? TeamProject then
         flash[:notice] = "This project is an individual #{@project.type.capitalize}, it does not have teams."

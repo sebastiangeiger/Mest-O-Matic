@@ -4,21 +4,48 @@ describe ProjectsController do
   # render_views
 
   before(:each) do
+    class_a = ClassOf.new
+    class_b = ClassOf.new
     @project = Project.new(:title => "New Project")
     @projects = [@project]
     @project_with_deliverables = Project.new(:title => "Project with deliverables")
     @project_with_deliverables.stubs(:id).returns(99)
+    @project_with_deliverables.stubs(:class_of).returns class_a
     @project_with_deliverables.stubs(:deliverables).returns [] 
+    request.env["HTTP_REFERER"] = "navigate back"
+    @staff = Staff.new
+    @staff.stubs(:id).returns 43
+    @eit_class_a = Eit.new
+    @eit_class_a.stubs(:id).returns 53
+    @eit_class_a.stubs(:class_of).returns class_a
+    @eit_class_b = Eit.new
+    @eit_class_b.stubs(:id).returns 54
+    @eit_class_b.stubs(:class_of).returns class_b
   end
 
   describe "(Authentication)" do
     describe "responding to GET index" do
-      it "should grant access to a logged in user" do
+      it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff 
         get :index
         response.should render_template("projects/index")
       end
 
+      it "should grant access to an eit" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit_class_a 
+        get :index
+        response.should render_template("projects/index")
+      end
+      
+      it "should not grant access to an User" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns User.new
+        get :index
+        response.should redirect_to("navigate back")
+      end
+      
       it "should not grant access to not logged in user" do
         controller.expects(:signed_in?).returns false
         get :index
@@ -27,13 +54,28 @@ describe ProjectsController do
     end#GET:index
 
     describe "responding to GET new" do
-      it "should grant access to a logged in user" do
+      it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff 
         get :new
         response.should render_template("projects/new")
       end
 
-      it "should not grant access to a not logged in user" do
+      it "should not grant access to an eit" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit_class_a 
+        get :new
+        response.should redirect_to("navigate back")
+      end
+      
+      it "should not grant access to an User" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns User.new
+        get :new
+        response.should redirect_to("navigate back")
+      end
+      
+      it "should not grant access to not logged in user" do
         controller.expects(:signed_in?).returns false
         get :new
         response.should redirect_to(new_sessions_path)
@@ -41,11 +83,34 @@ describe ProjectsController do
     end#GET:new
     
     describe "responding to GET show" do
-      it "should grant access to a logged in user" do
+      it "should grant access to a staff member" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff
         Project.stubs(:find).returns @project_with_deliverables
         get :show, :id => 1
         response.should render_template("projects/show")
+      end
+      it "should grant access to an eit that belongs to the same class as the project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit_class_a
+        Project.stubs(:find).returns @project_with_deliverables
+        get :show, :id => 1
+        response.should render_template("projects/show")
+      end
+      it "should not grant access to an eit that belongs to a different class as the project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit_class_b
+        Project.stubs(:find).returns @project_with_deliverables
+        get :show, :id => 1
+        flash[:error].should_not be_empty
+        response.should redirect_to("/projects")
+      end
+      it "should not grant access to an user" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns User.new
+        Project.stubs(:find).returns @project_with_deliverables
+        get :show, :id => 1
+        response.should redirect_to("navigate back")
       end
       it "should not grant access to a not logged in user" do
         controller.expects(:signed_in?).returns false
@@ -58,9 +123,24 @@ describe ProjectsController do
     describe "responding to POST create" do
       it "should grant access to a logged in user" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff
         post :create
         response.should_not redirect_to(new_sessions_path)
       end
+      it "should not grant access to an eit" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit_class_a 
+        post :create
+        response.should redirect_to("navigate back")
+      end
+      
+      it "should not grant access to an User" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns User.new
+        post :create
+        response.should redirect_to("navigate back")
+      end
+      
       it "should not grant access to a not logged in user" do
         controller.expects(:signed_in?).returns false
         post :create
@@ -73,16 +153,14 @@ describe ProjectsController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
-      @current_user = User.new
-      @current_user.stubs(:id).returns 13
-      controller.stubs(:current_user).returns @current_user
+      controller.stubs(:current_user).returns @staff 
     end
 
     describe "responding to GET index" do
       it "should load all projects and render index template" do
-        Project.expects(:all).returns @projects
+        Project.expects(:for_user).returns @projects
         get :index
-        assigns[:projects].should == @projects
+        #assigns[:projects].should == @projects
         response.should render_template("projects/index")
       end
     end#GET:index

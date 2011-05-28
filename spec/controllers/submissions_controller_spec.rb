@@ -19,6 +19,8 @@ describe SubmissionsController do
   
   describe "(Authentication)" do
     describe "responding to GET new" do
+      it "should not grant access to a staff member"
+      it "should not grant access to an eit that cannot work on this project"
       it "should grant access to a logged in user" do
         controller.expects(:signed_in?).returns true
         get :new, :deliverable_id => 11, :project_id => 10 
