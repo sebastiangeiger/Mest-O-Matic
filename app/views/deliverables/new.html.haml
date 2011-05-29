@@ -5,16 +5,16 @@
 		%legend Create a new Deliverable
 		%ol
 			%li
-				%label Title
+				= f.label :title
 				= f.text_field :title
 			%li
-				%label Description
+				= f.label :description
 				= f.text_field :description
 			%li
-				%label Start date
+				= f.label :start, "Start date"
 				= datetime_select :deliverable, :start_date, :start_year => Time.now.year - 1
 			%li
-				%label End date
+				= f.label :end, "End date"
 				= datetime_select :deliverable, :end_date, :start_year => Time.now.year - 1
 			%li
 				#button
