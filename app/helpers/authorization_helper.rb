@@ -20,5 +20,12 @@ module AuthorizationHelper
       redirect_to :back
     end
   end  
+  
+  def ensure_project_visible_to_eit
+    if current_user.eit? and current_user.class_of != @project.class_of then
+      redirect_to projects_path
+      flash[:error] = "This project is not available for you, here is a list of projects that are."
+    end
+  end
 
 end

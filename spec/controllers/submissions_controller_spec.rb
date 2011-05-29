@@ -2,27 +2,52 @@ require 'spec_helper'
 
 describe SubmissionsController do
   before(:each) do
+    class_a = ClassOf.new
+    class_b = ClassOf.new
     @project = Project.new(:title => "Project from database")
     @project.stubs(:id).returns(10)
+    @project.stubs(:class_of).returns class_a
     Project.stubs(:find).with(10).returns @project
     @deliverable = Deliverable.new
     @deliverable.stubs(:id).returns(11)
     @deliverable.stubs(:project).returns @project
     @project.stubs(:deliverables).returns [@deliverables]
     Deliverable.stubs(:find).with(11).returns @deliverable
-    @current_user = User.new
-    @current_user.stubs(:id).returns 53
+    @user = User.new
+    @user.stubs(:id).returns 53
+    @eit = Eit.new
+    @eit.stubs(:id).returns 55
+    @eit.stubs(:class_of).returns class_a
+    @foreign_eit = Eit.new
+    @foreign_eit.stubs(:id).returns 57
+    @foreign_eit.stubs(:class_of).returns class_b
+    @staff = Staff.new
+    @staff.stubs(:id).returns 59
     @valid_submission = Submission.new
     @valid_submission.stubs(:valid?).returns true
     @zipFile = File.new(Rails.root + 'spec/fixtures/files/zip_file.zip')    
+    request.env["HTTP_REFERER"] = "navigate back"
   end
   
   describe "(Authentication)" do
     describe "responding to GET new" do
-      it "should not grant access to a staff member"
-      it "should not grant access to an eit that cannot work on this project"
-      it "should grant access to a logged in user" do
+      it "should not grant access to a staff member" do
         controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff
+        get :new, :deliverable_id => 11, :project_id => 10 
+        response.should redirect_to("/projects/10")
+        flash[:error].should_not be_empty
+      end
+      it "should not grant access to an eit that cannot work on this project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @foreign_eit
+        get :new, :deliverable_id => 11, :project_id => 10 
+        response.should redirect_to("/projects")
+        flash[:error].should_not be_empty
+      end
+      it "should grant access to an Eit that is in the same class as the project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit
         get :new, :deliverable_id => 11, :project_id => 10 
         response.should render_template("submissions/new")
       end
@@ -33,11 +58,27 @@ describe SubmissionsController do
       end
     end
     describe "responding to POST create" do
-      it "should grant access to a logged in user" do
+      it "should not grant access to a staff member" do
         controller.expects(:signed_in?).returns true
-        controller.expects(:current_user).returns @current_user
+        controller.stubs(:current_user).returns @staff
         post :create, :deliverable_id => 11, :project_id => 10 
-        response.should_not redirect_to("/sessions/new")
+        response.should redirect_to("/projects/10")
+        flash[:error].should_not be_empty
+      end
+      it "should not grant access to an eit that cannot work on this project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @foreign_eit
+        post :create, :deliverable_id => 11, :project_id => 10 
+        response.should redirect_to("/projects")
+        flash[:error].should_not be_empty
+      end
+      it "should grant access to an Eit that is in the same class as the project" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @eit
+        Submission.any_instance.stubs(:valid?).returns true
+        post :create, :deliverable_id => 11, :project_id => 10 
+        flash[:notice].should_not be_empty
+        response.should redirect_to("/projects/10")
       end
       it "should not grant access to a not logged in user" do
         controller.expects(:signed_in?).returns false
@@ -50,7 +91,7 @@ describe SubmissionsController do
   describe "(Functional)" do
     before(:each) do
       controller.stubs(:signed_in?).returns true
-      controller.stubs(:current_user).returns @current_user
+      controller.stubs(:current_user).returns @eit
     end
     describe "responding to GET new" do
       it "should assign a new submission object to the submission variable" do
