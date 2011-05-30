@@ -2,6 +2,7 @@
 = form_for @submission, :url => project_deliverable_submissions_path,  :html => { :multipart => true} do |f|
 	= render :partial => 'shared/error_messages', :locals => {:target => @submission}
 	%ol
+		%li= f.label :archive, "File"
 		%li= f.file_field :archive
 		%li
 			#button= submit_tag "Create Submission"
