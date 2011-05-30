@@ -36,5 +36,20 @@ feature "Submission", %q{
     current_url.should == "http://www.example.com/projects/1"
     page.should have_content("You submitted 1 version(s)")
   end
+  scenario "Add a file with invalid file type"
+  scenario "Eit that is not in the class tries to gain access"
+  scenario "Add a file that has already been uploaded"
+end
+
+feature "Submission", %q{
+  In order to monitor the progress that my Eits are making
+  As a Staff member
+  I want to see an overview of files submitted for a deliverable
+} do
+
+  scenario "Three out of seven Eits in one class submitted a version"
+  scenario "No Eit submitted a version"
+  scenario "All seven Eits submitted a version"
+  scenario "Adding a submission results in rejection"
 
 end
