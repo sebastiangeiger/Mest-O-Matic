@@ -43,7 +43,7 @@ describe TeamProject do
       @team_project.assigned_eits.should == [@eitA]            
     end
   end
-  describe "#teams_for_eit" do
+  describe "#teams_for" do
     before(:each) do
       @eit = Eit.new
       @eitB = Eit.new
@@ -53,29 +53,29 @@ describe TeamProject do
     end
     
     it "should return an empty array if there are no teams" do
-      @team_project.teams_for_eit(@eit).should == []
+      @team_project.teams_for(@eit).should == []
     end
     it "should return an empty array if there is a team but the eit is not on it" do
       @teamA.stubs(:eits).returns [@eitB]
       @team_project.stubs(:teams).returns [@teamA]
-      @team_project.teams_for_eit(@eit).should == []
+      @team_project.teams_for(@eit).should == []
     end
     it "should return an array with the team if there is a team and the eit is on it" do
       @teamA.stubs(:eits).returns [@eit, @eitB]
       @team_project.stubs(:teams).returns [@teamA]
-      @team_project.teams_for_eit(@eit).should == [@teamA]
+      @team_project.teams_for(@eit).should == [@teamA]
     end
     it "should return an array with one team if there are two teams and the eit is on one of them it" do
       @teamA.stubs(:eits).returns [@eitB]
       @teamB.stubs(:eits).returns [@eit, @eitB]
       @team_project.stubs(:teams).returns [@teamA, @teamB]
-      @team_project.teams_for_eit(@eit).should == [@teamB]
+      @team_project.teams_for(@eit).should == [@teamB]
     end
     it "should return an array with two teams if there are two teams and the eit is on both" do
       @teamA.stubs(:eits).returns [@eit, @eitB]
       @teamB.stubs(:eits).returns [@eit, @eitB]
       @team_project.stubs(:teams).returns [@teamA, @teamB]
-      @team_project.teams_for_eit(@eit).should == [@teamA, @teamB]
+      @team_project.teams_for(@eit).should == [@teamA, @teamB]
     end
   end
 end

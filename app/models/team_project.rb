@@ -27,8 +27,14 @@ class TeamProject < Project
     class_of.eits.reject{|eit| assigned_eits.include?(eit)}
   end
   
-  def teams_for_eit(eit)
-    teams.select{|team| team.eits.include?(eit)}
+  def teams_for(user)
+    if user and user.eit? then
+      teams.select{|team| team.eits.include?(user)}
+    elsif user and user.staff? then
+      teams
+    else
+      []
+    end
   end
   
   def has_empty_teams?

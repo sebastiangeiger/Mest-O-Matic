@@ -9,10 +9,16 @@
 	= "Updated: #{@project.updated_at}" unless @project.created_at == @project.updated_at
 - if @project.is_a? TeamProject then
 	%h2 
-		= "Teams (#{@project.teams.size})"
+		- if current_user.staff? then
+			= "Teams (#{@project.teams.size})"
+		- else
+			My Team
 		= link_to "+", new_project_team_path(@project) if current_user.staff? and not @project.has_empty_teams? and not @project.unassigned_eits.empty?
-	%ol
-		= render :partial => "teams/summary", :collection => @project.teams, :as => :team
+	- unless @project.teams_for(current_user).empty? then
+		%ol
+			= render :partial => "teams/summary", :collection => @project.teams_for(current_user), :as => :team
+	- else
+		Not assigned to a team yet.
 %h2
 	= "Deliverables (#{@project.deliverables.count})"
 	= link_to "+", new_project_deliverable_path(@project) if current_user.staff?
