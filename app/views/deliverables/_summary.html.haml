@@ -10,7 +10,14 @@
 			- on_time_icon(deliverable, current_user)
 	.body
 		%ul
-			%li= deliverable.submitted?(current_user) ? "You submitted #{deliverable.submissions(current_user).size} version(s). The latest one on #{deliverable.latest_submission(current_user).created_at}" : "You did not submit a version yet."
+			%li
+				- if current_user.eit? then
+					- if deliverable.submitted?(current_user) then
+						= "You submitted #{deliverable.submissions(current_user).size} version(s). The latest one on #{deliverable.latest_submission(current_user).created_at}" 
+					- else
+						= "You did not submit a version yet."
+				- elsif current_user.staff? then
+					= "#{deliverable.solutions.size}/#{deliverable.project.class_of.eits.size} Eits submitted so far."
 			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
 			%li= "This deliverable was last changed on #{deliverable.updated_at} by #{deliverable.author.name}"
 		%p

@@ -88,7 +88,8 @@ feature "Users", %q{
     Staff.create(:first_name => "Some",    :last_name => "Fellow",  :identifier_url => "http://someidentifier.url/1234", :email => "some.fellow@meltwater.org")
     Eit.create(  :first_name => "Some",    :last_name => "Student", :identifier_url => "http://someidentifier.url/abdc", :email => "some.eit@meltwater.org", :class_of => c)
     Eit.create(  :first_name => "Another", :last_name => "Student", :identifier_url => "http://someidentifier.url/efgh", :email => "another.user@meltwater.org", :class_of => c)
-    Staff.create(:first_name => "Another",    :last_name => "Fellow",  :identifier_url => "http://someidentifier.url/5678", :email => "another.fellow@meltwater.org")
+    Staff.create(:first_name => "Another", :last_name => "Fellow",  :identifier_url => "http://someidentifier.url/5678", :email => "another.fellow@meltwater.org")
+    User.create(:first_name => "A",        :last_name => "User",    :identifier_url => "http://someidentifier.url/0123", :email => "a.user@meltwater.org")
   end
 
   scenario "Staff logs in, goes to his profile, makes some changes and saves them" do
@@ -101,9 +102,34 @@ feature "Users", %q{
     e.first_name.should == "I Am"
     e.last_name.should == "A Fellow"
   end
-  scenario "Staff logs in, goes to an User profile, makes some changes and saves them"
-  scenario "Staff logs in, goes to an Eit  profile, makes some changes and saves them" 
-  scenario "Staff logs in, goes to a Staff profile that is not his and gets turned away" 
+  scenario "Staff logs in, goes to an User profile, makes some changes and saves them" do
+    visit "/testlogin/1" #fake login
+    visit "/users/5/edit"
+    current_url.should == "http://www.example.com/users/5/edit"
+    fill_in "First Name", :with => "I Am"
+    fill_in "Last Name", :with => "A User"
+    find_button('save').click
+    e = User.where(:id => 5).first
+    e.first_name.should == "I Am"
+    e.last_name.should == "A User"
+  end
+  scenario "Staff logs in, goes to an Eit  profile, makes some changes and saves them" do
+    visit "/testlogin/1" #fake login
+    visit "/users/2/edit"
+    current_url.should == "http://www.example.com/users/2/edit"
+    fill_in "First Name", :with => "I Am"
+    fill_in "Last Name", :with => "An Eit"
+    find_button('save').click
+    e = User.where(:id => 2).first
+    e.first_name.should == "I Am"
+    e.last_name.should == "An Eit"
+  end
+  scenario "Staff logs in, goes to a Staff profile that is not his and gets turned away" do
+    visit "/testlogin/1" #fake login
+    visit "/users/4/edit"
+    current_url.should == "http://www.example.com/users/1/edit"
+    page.should have_content("Not enough privileges to edit this user")
+  end
 
 
 end

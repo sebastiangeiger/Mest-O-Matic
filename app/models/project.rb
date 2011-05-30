@@ -33,10 +33,6 @@ class Project < ActiveRecord::Base
     SUBTYPES
   end
 
-  def Project.by_class(class_of)
-    Project.all.select{|p| p.semester.class_of==class_of}
-  end
-
   def Project.for_user(user)
     if user.eit? then
       @projects = Project.by_class(user.class_of)
@@ -46,4 +42,10 @@ class Project < ActiveRecord::Base
       @projects = []
     end
   end
+  private
+    def Project.by_class(class_of)
+      Project.all.select{|p| p.semester.class_of==class_of}
+    end
+
+
 end

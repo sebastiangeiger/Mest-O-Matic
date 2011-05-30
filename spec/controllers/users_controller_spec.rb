@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe UsersController do
-  render_views
   
   before(:each) do
     @user = User.new
@@ -11,12 +10,19 @@ describe UsersController do
   
   describe "(Authorization)" do
     before(:each) do
+      @staff.stubs(:id).returns(11)
       @user.stubs(:id).returns(12)
       User.stubs(:find).with(12).returns(@user)
       @userB = User.new
       @userB.stubs(:email).returns("somebody.else@meltwater.org")
       @userB.stubs(:id).returns(99)
       User.stubs(:find).with(99).returns @userB
+      eit = Eit.new
+      eit.stubs(:id).returns 13
+      User.stubs(:find).with(13).returns eit
+      staffB = Staff.new
+      staffB.stubs(:id).returns 14
+      User.stubs(:find).with(14).returns staffB
     end
     describe "GET 'edit'" do
       it "should not grant access to a not logged in user" do
@@ -36,6 +42,27 @@ describe UsersController do
         controller.expects(:current_user).at_least_once.returns @user
         get :edit, :id => 12
         response.should render_template("users/edit")
+      end
+      it "should allow a staff member to edit an eit" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff 
+        get :edit, :id => 13
+        flash[:error].should be_nil 
+        response.should_not redirect_to("/users/11/edit")
+      end
+      it "should allow a staff member to edit an user" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff 
+        get :edit, :id => 12
+        flash[:error].should be_nil 
+        response.should_not redirect_to("/users/11/edit")
+      end
+      it "should not allow a staff member to edit another staff member" do
+        controller.expects(:signed_in?).returns true
+        controller.stubs(:current_user).returns @staff 
+        get :edit, :id => 14
+        flash[:error].should_not be_nil
+        response.should redirect_to("/users/11/edit")
       end
     end
 

@@ -17,6 +17,7 @@ feature "Project", %q{
     Assignment.create(:title => "First Project", :semester => s2023, :start => DateTime.parse("2021-09-01T09:00+00:00"))
     Quiz.create(:title => "Second Project", :semester => s2023, :start => DateTime.parse("2021-09-01T09:00+00:00"))
     Assignment.create(:title => "Third Project", :semester => s2022, :start => DateTime.parse("2021-09-01T09:00+00:00"))
+    TeamProject.create(:title => "There is no I in Team", :semester => s2022, :start => DateTime.parse("2021-09-02T09:00+00:00"))
   end
 
   scenario "Login as an Eit of class 2023, list all projects for the class of 2023, but not for class of 2022" do
@@ -25,17 +26,22 @@ feature "Project", %q{
     page.should have_content("Projects (2)")
     page.should have_content("First Project")
     page.should have_content("Second Project")
+    page.should_not have_content("There is no I in Team")
     page.should_not have_content("Third Project")
+    page.should_not have_link("+")
   end
 
   scenario "Login as an Eit of class 2022, list all projects for the class of 2022, but not for class of 2023" do
     visit "/testlogin/1"
     visit "/projects"
-    page.should have_content("Projects (1)")
+    page.should have_content("Projects (2)")
     page.should_not have_content("First Project")
     page.should_not have_content("Second Project")
+    page.should have_content("There is no I in Team")
     page.should have_content("Third Project")
     page.should_not have_link("+")
+    find_link("There is no I in Team").click
+    current_url.should == "http://www.example.com/projects/4"
   end
   
   scenario "Login as an Eit of class 2022, access a project of class 2022, get information" do
@@ -43,6 +49,7 @@ feature "Project", %q{
     visit "/projects/3"
     page.should have_content("Third Project")
     page.should have_content("Class of 2022")
+    page.should have_content("Assignment")
   end
 
   scenario "Login as an Eit of class 2023, access a project of class 2022, get redirected to projects index and show an error message" do
@@ -51,7 +58,13 @@ feature "Project", %q{
     current_url.should == "http://www.example.com/projects"
     page.should have_content("This project is not available for you, here is a list of projects that are.")
   end
-
+  
+  scenario "Login as an Eit of class 2023, go to a team project, see my team members and the deliverables" do
+    visit "/testlogin/1"
+    visit "/projects/4"
+    page.should have_content("There is no I in Team")
+    page.should have_content("Team Project")
+  end
   
 end
 
