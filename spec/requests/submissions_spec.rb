@@ -21,7 +21,7 @@ feature "Submission", %q{
     d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => DateTime.parse("2021-09-01T09:00+00:00"), :end_date => DateTime.parse("2021-09-08T09:00+00:00"), :project => a1, :author => staff)
   end
 
-  scenario "Go to a project site, no deliverable has been added yet. Add a submission, come back, the site tells you that there is one version submitted" do
+  scenario "Go to a project site, no deliverable has been added yet. Add a submission, come back, the site tells you that there is one version submitted, then do it over again, shows you two versions" do
     visit "/testlogin/2"
     visit "/projects/1"
     page.should have_content("Deliverables (1)")
@@ -36,6 +36,12 @@ feature "Submission", %q{
     current_url.should == "http://www.example.com/projects/1"
     page.should have_content("Successfully submitted the archive")
     page.should have_content("You submitted 1 version(s)")
+    find_link("Add Submission").click
+    attach_file("File", File.join(::Rails.root, "spec", "fixtures", "files", "zip_file_different.zip"))
+    find_button("Create Submission").click
+    current_url.should == "http://www.example.com/projects/1"
+    page.should have_content("Successfully submitted the archive")
+    page.should have_content("You submitted 2 version(s)")
   end
   scenario "Add a file with invalid file type" do
     visit "/testlogin/2"
@@ -50,6 +56,8 @@ feature "Submission", %q{
     attach_file("File", File.join(::Rails.root, "spec", "fixtures", "files", "pdf_file.pdf"))
     find_button("Create Submission").click
     current_url.should == "http://www.example.com/projects/1/deliverables/1/submissions"
+    page.should have_content("error")
+    page.should have_content("Archive content type is not")
   end
   scenario "Eit that is not in the class tries to gain access, gets rejected" do
     visit '/testlogin/1/'

@@ -18,6 +18,7 @@ class Deliverable < ActiveRecord::Base
   belongs_to :project
   
   has_many :solutions
+  has_many :submissions, :through => :solutions
   belongs_to :author, :class_name => "User", :foreign_key => "author_id"
   
   validates :title, :presence => true
@@ -48,7 +49,7 @@ class Deliverable < ActiveRecord::Base
     not graded?
   end
   
-  def submissions(by_user)
+  def submissions_for(by_user)
     user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
     if user_solution
       user_solution.submissions 
@@ -58,15 +59,15 @@ class Deliverable < ActiveRecord::Base
   end
   
   def not_submitted?(by_user)
-    submissions(by_user).empty?
+    submissions_for(by_user).empty?
   end
   
   def submitted?(by_user)
-    submissions(by_user).size > 0
+    submissions_for(by_user).size > 0
   end
 
   def latest_submission(by_user)
-    submissions(by_user).sort{|a,b| a.created_at <=> b.created_at}.first
+    submissions_for(by_user).sort{|a,b| a.created_at <=> b.created_at}.first
   end
   
   def submitted_on_time?(by_user)
@@ -75,6 +76,17 @@ class Deliverable < ActiveRecord::Base
   
   def submitted_too_late?(by_user)
     submitted?(by_user) and not submitted_on_time?(by_user)
+  end
+
+  def versions 
+    versions = {0 => []}
+    current_submissions = []
+    submissions.sort{|a,b| a.created_at <=> b.created_at}.each_with_index do |sub, i|
+      current_submissions = Array.new(current_submissions).reject{|s| sub.solution == s.solution}
+      current_submissions << sub
+      versions[i+1] = current_submissions
+    end
+    return versions
   end
   
 end
