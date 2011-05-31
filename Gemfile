@@ -30,6 +30,8 @@ gem 'ruby-openid'
 gem 'rack-openid'
 gem 'ruby-openid-apps-discovery'
 
+gem 'zipruby'
+
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
 # and rake tasks are available in development mode:
