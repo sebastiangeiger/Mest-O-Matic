@@ -103,7 +103,7 @@ class Deliverable < ActiveRecord::Base
       FileUtils.mkdir_p(dest_folder)
       #Copy everything into dest_folder
       versions[nr].each do |sub| 
-        user_dest = File.join(dest_folder, sub.user.identifier_name) #TODO: sub.user.identifier_name
+        user_dest = File.join(dest_folder, "#{sub.user.identifier_name}_#{sub.version}") 
         FileUtils.cp_r(sub.unzipped_path, user_dest)
       end 
       #Create zipfile out of dest_folder

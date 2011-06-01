@@ -31,6 +31,10 @@ class Submission < ActiveRecord::Base
     solution.user
   end
 
+  def version
+    solution.submissions.index(self)
+  end
+
   def generate_md5_checksum
     self.md5_checksum = Digest::MD5.hexdigest(archive.to_file.read) if archive and archive.to_file
   end
