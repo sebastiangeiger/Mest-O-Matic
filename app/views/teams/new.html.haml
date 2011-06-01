@@ -6,7 +6,7 @@
 %ul
 	= render :partial => "summary", :collection => @project.teams, :as => :team
 %h3 New Team
-- form_for @team, :url => project_teams_path(@project) do |f|
+= form_for @team, :url => project_teams_path(@project) do |f|
 	= render :partial => 'shared/error_messages', :locals => {:target => @team}
 	= f.fields_for :team_memberships do |eits_f|
 		#member
