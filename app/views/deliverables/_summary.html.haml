@@ -21,4 +21,5 @@
 			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
 			%li= "This deliverable was last changed on #{deliverable.updated_at} by #{deliverable.author.name}"
 		%p
+			= link_to "Download all Submissions (Version #{deliverable.versions.keys.max})", download_project_deliverable_path(deliverable.project, deliverable) if current_user.staff? and deliverable.versions.keys.max >= 1
 			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable) if current_user.eit?

@@ -93,7 +93,7 @@ end
 feature "Submission", %q{
   In order to monitor the progress that my Eits are making
   As a Staff member
-  I want to see an overview of files submitted for a deliverable
+  I want to see an overview of files submitted for a deliverable and download all submissions for a deliverable in on file
 } do
 
   background do
@@ -126,6 +126,8 @@ feature "Submission", %q{
     page.should have_content("Deliverables (1)")
     page.should have_content("3/7 Eits submitted so far")
     page.should_not have_content("You did not submit a version yet")
+    page.should have_content("Download all Submissions (Version 3)")
+    page.should have_link("Download all Submissions (Version 3)", :href => "/projects/1/deliverables/1/download")
   end
   scenario "No Eit submitted a version" do
     visit "/testlogin/8"
@@ -133,6 +135,7 @@ feature "Submission", %q{
     page.should have_content("Deliverables (1)")
     page.should have_content("0/7 Eits submitted so far")
     page.should_not have_content("You did not submit a version yet")
+    page.should_not have_content("Download")
   end
   scenario "Adding a submission results in rejection" do
     visit "/testlogin/8"

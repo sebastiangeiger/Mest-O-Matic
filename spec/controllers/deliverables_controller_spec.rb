@@ -70,6 +70,36 @@ describe DeliverablesController do
         response.should redirect_to(new_sessions_path)
       end
     end
+    describe "responding to GET download" do
+      before(:each) do
+        @deliverable = Deliverable.new
+        Deliverable.stubs(:find).with(10).returns @deliverable
+      end
+      it "should grant access to a staff member" do
+        controller.expects(:signed_in?).returns true
+        controller.expects(:current_user).at_least(1).returns @staff
+        @deliverable.expects(:download_latest_version) #TODO: Is also functional test?!
+        controller.expects(:send_file)
+        get :download, :project_id => 11, :id => 10
+      end
+      it "should not grant access to an eit" do
+        controller.expects(:signed_in?).returns true
+        controller.expects(:current_user).at_least(1).returns @eit
+        get :download, :project_id => 11, :id => 10
+        response.should redirect_to("navigate back")
+      end
+      it "should not grant access to an user" do
+        controller.expects(:signed_in?).returns true
+        controller.expects(:current_user).at_least(1).returns @user
+        get :download, :project_id => 11, :id => 10
+        response.should redirect_to("navigate back")
+      end
+      it "should grant access to a staff member" do
+        controller.expects(:signed_in?).returns false
+        get :download, :project_id => 11, :id => 10
+        response.should redirect_to("/sessions/new")
+      end
+    end
   end
   
   describe "(Functional)" do

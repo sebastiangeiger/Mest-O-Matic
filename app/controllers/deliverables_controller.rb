@@ -20,6 +20,12 @@ class DeliverablesController < ApplicationController
     end
   end
 
+  def download
+    deliverable = Deliverable.find(params[:id])
+    send_file deliverable.download_latest_version
+    redirect_to project_path(@project)
+  end
+
   private
     def load_project
       @project = Project.find(params[:project_id])

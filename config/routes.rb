@@ -10,6 +10,9 @@ MestOMatic::Application.routes.draw do
   end
   resources :projects do
     resources :deliverables do
+      member do
+        get 'download'
+      end
       resources :submissions
     end
     resources :teams
