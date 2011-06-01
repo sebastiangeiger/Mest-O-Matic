@@ -89,4 +89,49 @@ class Deliverable < ActiveRecord::Base
     return versions
   end
   
+  def download_version(nr)
+    zip_root = "deliverable_#{id}_#{nr}" #TODO: have project name in filename
+    zipped_file = File.join(Rails.root, "public/system/deliverables/#{zip_root}.zip")
+    FileUtils.mkdir_p(File.dirname(zipped_file))
+    unless File.exists?(zipped_file) then
+      dest_folder = version_unzipped_path(nr)
+      FileUtils.rm_r(dest_folder) if File.exists?(dest_folder) # Start with a clean slate
+      FileUtils.mkdir_p(dest_folder)
+      #Copy everything into dest_folder
+      versions[nr].each do |sub| 
+        user_dest = File.join(version_unzipped_path(nr), "user_#{sub.solution.user.id.to_s}") #TODO: sub.user.identifier_name
+        FileUtils.cp_r(sub.unzipped_path, user_dest)
+      end 
+      FileUtils.rm_r(dest_folder) if File.exists?(dest_folder) # Clean up?
+      #Create zipfile out of dest_folder
+      Zip::Archive.open(zipped_file, Zip::CREATE) do |ar| 
+        ar.add_dir(zip_root)
+        Dir.glob("#{dest_folder}/**/*").each do |path|
+          zip_path = File.join(zip_root, Deliverable.remove_root_path(path, dest_folder)) 
+          if File.directory?(path)
+            ar.add_dir(zip_path) 
+          else
+            ar.add_file(zip_path, path) 
+          end
+        end
+      end
+    end
+    #send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "some-brilliant-file-name.zip"
+    zipped_file
+  end
+
+  def version_unzipped_path(nr)
+    File.join(Rails.root, "public/system/unzipped/deliverable_versions", nr.to_s)
+  end
+
+  def Deliverable.remove_root_path(path, root)
+    roots = []
+    paths = []
+    roots = root.split("/").reject{|p| p.empty?} if root
+    paths = path.split("/").reject{|p| p.empty?} if path
+    while paths.first.eql?(roots.shift) do
+      paths.shift
+    end
+    return paths.join("/")
+  end
 end
