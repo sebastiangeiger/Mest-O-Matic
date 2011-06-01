@@ -16,5 +16,5 @@
 #
 
 class Staff < User
-  
+  has_many :reviews
 end

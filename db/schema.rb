@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110518183857) do
+ActiveRecord::Schema.define(:version => 20110601194807) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -39,6 +39,15 @@ ActiveRecord::Schema.define(:version => 20110518183857) do
     t.datetime "updated_at"
     t.integer  "subject_id"
     t.string   "type"
+  end
+
+  create_table "reviews", :force => true do |t|
+    t.integer  "percentage"
+    t.integer  "submission_id"
+    t.text     "remarks"
+    t.integer  "reviewer_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "semesters", :force => true do |t|

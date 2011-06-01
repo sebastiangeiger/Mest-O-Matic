@@ -17,6 +17,8 @@
 class Submission < ActiveRecord::Base
   belongs_to :solution
   
+  has_one :review
+
   has_attached_file :archive
   
   before_validation :generate_md5_checksum, :on => :create
