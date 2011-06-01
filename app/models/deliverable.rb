@@ -29,6 +29,10 @@ class Deliverable < ActiveRecord::Base
   validates :author, :presence => true
   validate :start_date_must_be_before_end_date
   
+  def safe_title
+    title.gsub(/\s/, "_").camelize.gsub(/[^a-zA-Z0-9]/, "")
+  end
+
   def start_date_must_be_before_end_date
     errors.add(:end_date, 'must be after start date') if start_date and end_date and start_date >= end_date
   end
@@ -90,7 +94,7 @@ class Deliverable < ActiveRecord::Base
   end
   
   def download_version(nr)
-    zip_root = "deliverable_#{id}_#{nr}" #TODO: have project name in filename
+    zip_root = "#{id}_#{project.safe_title}_#{safe_title}_ver#{nr}" 
     zipped_file = File.join(Rails.root, "public/system/deliverables/#{zip_root}.zip")
     FileUtils.mkdir_p(File.dirname(zipped_file))
     unless File.exists?(zipped_file) then
@@ -99,10 +103,9 @@ class Deliverable < ActiveRecord::Base
       FileUtils.mkdir_p(dest_folder)
       #Copy everything into dest_folder
       versions[nr].each do |sub| 
-        user_dest = File.join(version_unzipped_path(nr), "user_#{sub.solution.user.id.to_s}") #TODO: sub.user.identifier_name
+        user_dest = File.join(dest_folder, sub.user.identifier_name) #TODO: sub.user.identifier_name
         FileUtils.cp_r(sub.unzipped_path, user_dest)
       end 
-      FileUtils.rm_r(dest_folder) if File.exists?(dest_folder) # Clean up?
       #Create zipfile out of dest_folder
       Zip::Archive.open(zipped_file, Zip::CREATE) do |ar| 
         ar.add_dir(zip_root)

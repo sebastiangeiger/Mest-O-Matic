@@ -36,6 +36,10 @@ class User < ActiveRecord::Base
   validates :type,         :allow_nil => true, :inclusion => SUBTYPES
   validates_presence_of :class_of, :if => :eit?
   
+  def identifier_name 
+    email.split("@").first
+  end
+
   def suggested_first_name
     first_name || email.split("@").first.split(".").first.capitalize
   end

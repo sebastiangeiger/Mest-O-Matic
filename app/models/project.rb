@@ -33,6 +33,10 @@ class Project < ActiveRecord::Base
     SUBTYPES
   end
 
+  def safe_title
+    title.gsub(/\s/, "_").camelize.gsub(/[^a-zA-Z0-9]/, "")
+  end
+ 
   def Project.for_user(user)
     if user.eit? then
       @projects = Project.by_class(user.class_of)

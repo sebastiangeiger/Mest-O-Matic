@@ -27,6 +27,10 @@ class Submission < ActiveRecord::Base
   validate :unique_archive
   #TODO: Unzip as part of upload?
 
+  def user
+    solution.user
+  end
+
   def generate_md5_checksum
     self.md5_checksum = Digest::MD5.hexdigest(archive.to_file.read) if archive and archive.to_file
   end
