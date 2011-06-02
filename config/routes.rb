@@ -13,6 +13,7 @@ MestOMatic::Application.routes.draw do
       member do
         get 'download'
       end
+      resources :reviews
       resources :submissions
     end
     resources :teams

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 feature "Deliverable", %q{
-  In order to what I need to be working on
+  In order to know what I need to be working on
   As an Eit
   I want to be able to find information on the Deliverables for a project 
 } do
