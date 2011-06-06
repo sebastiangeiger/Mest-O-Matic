@@ -23,12 +23,13 @@ class Submission < ActiveRecord::Base
   
   accepts_nested_attributes_for :review
 
+  #TODO: Move archive to FileSubmission subclass
   before_validation :generate_md5_checksum, :on => :create
   validates :solution, :presence => true 
   validates_attachment_presence :archive
   validates_attachment_content_type :archive, :content_type => "application/zip"
   validates :md5_checksum, :presence => true
-  validate :unique_archive
+  #validate :unique_archive
   #TODO: Unzip as part of upload?
 
   def user
