@@ -16,11 +16,13 @@
 
 class Deliverable < ActiveRecord::Base
   belongs_to :project
+  belongs_to :author, :class_name => "User", :foreign_key => "author_id"
   
   has_many :solutions
   has_many :submissions, :through => :solutions
-  belongs_to :author, :class_name => "User", :foreign_key => "author_id"
-  
+
+  accepts_nested_attributes_for :solutions
+
   validates :title, :presence => true
   validates_uniqueness_of :title, :scope => :project_id, :case_sensitive => false
   validates :project, :presence => true
@@ -29,6 +31,10 @@ class Deliverable < ActiveRecord::Base
   validates :author, :presence => true
   validate :start_date_must_be_before_end_date
   
+  def eits
+    project.class_of.eits
+  end
+
   def safe_title
     title.gsub(/\s/, "_").camelize.gsub(/[^a-zA-Z0-9]/, "")
   end
@@ -97,6 +103,10 @@ class Deliverable < ActiveRecord::Base
     download_version(latest_version_nr)
   end
   
+  def latest_version
+    versions[latest_version_nr]
+  end
+
   def latest_version_nr
     versions.keys.max
   end

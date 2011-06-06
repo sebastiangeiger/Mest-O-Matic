@@ -21,9 +21,11 @@ class Submission < ActiveRecord::Base
 
   has_attached_file :archive
   
+  accepts_nested_attributes_for :review
+
   before_validation :generate_md5_checksum, :on => :create
-  validates_attachment_presence :archive
   validates :solution, :presence => true 
+  validates_attachment_presence :archive
   validates_attachment_content_type :archive, :content_type => "application/zip"
   validates :md5_checksum, :presence => true
   validate :unique_archive

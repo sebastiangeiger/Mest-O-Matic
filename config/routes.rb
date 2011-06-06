@@ -13,7 +13,11 @@ MestOMatic::Application.routes.draw do
       member do
         get 'download'
       end
-      resources :reviews
+      resources :reviews do
+        collection do
+          post 'mass_create'
+        end
+      end
       resources :submissions
     end
     resources :teams

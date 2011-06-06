@@ -1,2 +1,17 @@
-%h1 Reviews#index
-%p Find me in app/views/reviews/index.html.erb
+%h1= "#{@deliverable.project.title} - #{@deliverable.title}" 
+%h2 Grading Sheet
+= form_tag mass_create_project_deliverable_reviews_path(@deliverable.project, @deliverable) do 
+  %table
+    %tr
+      %th Name
+      %th Grade
+      %th Remarks
+
+    - @submissions.each do |submission|
+      %tr
+        = fields_for "submissions[#{submission.id}][review_attributes]", submission.review do |rev_f|
+          %td= rev_f.label :user, submission.user
+          %td= rev_f.text_field :percentage
+          %td= rev_f.text_area :remarks
+        
+  #button= submit_tag "Save"

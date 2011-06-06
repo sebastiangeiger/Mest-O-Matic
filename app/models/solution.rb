@@ -15,6 +15,7 @@ class Solution < ActiveRecord::Base
   belongs_to :user
   has_many :submissions
   
+  accepts_nested_attributes_for :submissions
   validates :user, :presence => true 
   validates :deliverable, :presence => true
   validates_uniqueness_of :user_id, :scope => :deliverable_id
