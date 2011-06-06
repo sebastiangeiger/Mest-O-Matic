@@ -17,6 +17,7 @@ feature "Review", %q{
     e1 = Eit.create(:first_name => "Another", :last_name => "Student", :identifier_url => "http://someidentifier.url/efgh", :email => "another.eit@meltwater.org", :class_of => youngerClass)
     e2 = Eit.create(:first_name => "Second",  :last_name => "Student", :identifier_url => "http://someidentifier.url/ijkl", :email => "second.eit@meltwater.org",  :class_of => youngerClass)
     e3 = Eit.create(:first_name => "Third",   :last_name => "Student", :identifier_url => "http://someidentifier.url/mnop", :email => "third.eit@meltwater.org",   :class_of => youngerClass)
+    @second_staff = Staff.create(:first_name => "Another", :last_name => "Staff",  :identifier_url => "http://someidentifier.url/4567", :email => "another.staff@meltwater.org")
     a1 = Assignment.create(:title => "First Project", :semester => firstSemester, :start => DateTime.now-1.weeks)
     d1 = Deliverable.create(:title => "A past Deliverable for the First Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a1, :author => staff)
     d2 = Deliverable.create(:title => "A future Deliverable for the First Project", :start_date => DateTime.now-1.days, :end_date => DateTime.now+2.hours, :project => a1, :author => staff)
@@ -59,7 +60,17 @@ feature "Review", %q{
     @sub3.review.percentage.should == 60
   end
 
-  scenario "Login as a staff member A, the deliverable was created by staff member B. The site should show a warning that you are not the author."
+  scenario "Login as a staff member A, the deliverable was created by staff member B. The site should show a warning that you are not the author." do
+    visit "/testlogin/#{@second_staff.id}"
+    visit "/projects/1"
+    find_link("Enter Grades").click
+    save_and_open_page
+    page.should have_content("This deliverable was created by Staff Member. Are you sure you want to grade it?")
+    visit "/testlogin/1"
+    visit "/projects/1"
+    find_link("Enter Grades").click
+    page.should_not have_content("This deliverable was created by Staff Member. Are you sure you want to grade it?")
+  end
 
   scenario "Only two out of three Eits have handed in a submission. I Login as a staff member, go to a valid deliverable review site, it has boxes for all three eits" #TODO: Change the way solutions for deliverables are created, create them when creating the deliverables
 end

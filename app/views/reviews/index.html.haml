@@ -1,5 +1,6 @@
 %h1= "#{@deliverable.project.title} - #{@deliverable.title}" 
 %h2 Grading Sheet
+%h3= "This deliverable was created by #{@deliverable.author.name}. Are you sure you want to grade it?" unless current_user.eql?(@deliverable.author) 
 = form_tag mass_create_project_deliverable_reviews_path(@deliverable.project, @deliverable) do 
   %table
     %tr
