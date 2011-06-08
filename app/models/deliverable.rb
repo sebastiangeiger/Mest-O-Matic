@@ -31,8 +31,19 @@ class Deliverable < ActiveRecord::Base
   validates :author, :presence => true
   validate :start_date_must_be_before_end_date
   
+  after_create do |d|
+    eits.each do |eit| 
+      s = Solution.create(:deliverable => d, :user => eit)
+      Submission.create(:solution => s)
+    end
+  end   
+  
   def eits
     project.class_of.eits
+  end
+
+  def eits_submitted
+    solutions.select{|sol| sol.submissions.select{|sub| sub.is_a?(FileSubmission)}.size > 0}.collect{|sol| sol.user}
   end
 
   def safe_title
@@ -62,9 +73,9 @@ class Deliverable < ActiveRecord::Base
   def submissions_for(by_user)
     user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
     if user_solution
-      user_solution.submissions 
+      user_solution.submissions.select{|sub| sub.is_a?(FileSubmission)} 
     else
-      []
+      [] #TODO: Can I remove this branch?
     end
   end
   
@@ -91,7 +102,7 @@ class Deliverable < ActiveRecord::Base
   def versions 
     versions = {0 => []}
     current_submissions = []
-    submissions.sort{|a,b| a.created_at <=> b.created_at}.each_with_index do |sub, i|
+    submissions.select{|sub| sub.is_a?(FileSubmission)}.sort{|a,b| a.created_at <=> b.created_at}.each_with_index do |sub, i|
       current_submissions = Array.new(current_submissions).reject{|s| sub.solution == s.solution}
       current_submissions << sub
       versions[i+1] = current_submissions

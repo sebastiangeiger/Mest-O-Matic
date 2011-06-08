@@ -76,7 +76,6 @@ feature "Submission", %q{
     current_url.should == "http://www.example.com/projects/1/deliverables/1/submissions/new"
     attach_file("File", File.join(::Rails.root, "spec", "fixtures", "files", "zip_file.zip"))
     find_button("Create Submission").click
-    p Submission.last.inspect
     current_url.should == "http://www.example.com/projects/1"
     page.should have_content("You submitted 1 version(s)")
     page.should have_link("Add Submission")
@@ -115,12 +114,12 @@ feature "Submission", %q{
 
   scenario "Three out of seven Eits in one class submitted a version, this should show up any Staff members summary" do
     zipFile = File.new(Rails.root + 'spec/fixtures/files/zip_file.zip')
-    sol1 = Solution.create(:user => @e1, :deliverable => @d1)
-    sol2 = Solution.create(:user => @e2, :deliverable => @d1)
-    sol3 = Solution.create(:user => @e3, :deliverable => @d1)
-    Submission.create(:solution => sol1, :archive => zipFile)
-    Submission.create(:solution => sol2, :archive => zipFile)
-    Submission.create(:solution => sol3, :archive => zipFile)
+    sol1 = Solution.where(:user_id => @e1.id, :deliverable_id => @d1.id).first
+    sol2 = Solution.where(:user_id => @e2.id, :deliverable_id => @d1.id).first
+    sol3 = Solution.where(:user_id => @e3.id, :deliverable_id => @d1.id).first
+    FileSubmission.create(:solution => sol1, :archive => zipFile)
+    FileSubmission.create(:solution => sol2, :archive => zipFile)
+    FileSubmission.create(:solution => sol3, :archive => zipFile)
     visit "/testlogin/8"
     visit "/projects/1"
     page.should have_content("Deliverables (1)")

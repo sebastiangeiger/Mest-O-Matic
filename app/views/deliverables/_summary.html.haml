@@ -17,7 +17,7 @@
 					- else
 						= "You did not submit a version yet."
 				- elsif current_user.staff? then
-					= "#{deliverable.solutions.size}/#{deliverable.project.class_of.eits.size} Eits submitted so far."
+					= "#{deliverable.eits_submitted.size}/#{deliverable.eits.size} Eits submitted so far."
 			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
 			%li= "This deliverable was last changed on #{deliverable.updated_at} by #{deliverable.author.name}"
 		%p

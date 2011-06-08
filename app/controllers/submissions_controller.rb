@@ -6,12 +6,12 @@ class SubmissionsController < ApplicationController
   before_filter :ensure_project_visible_to_eit
   
   def new
-    @submission = Submission.new
+    @submission = FileSubmission.new
   end
 
   def create
-    @submission = Submission.new(params[:submission])
-    @solution = Solution.find_or_create(:deliverable => @deliverable, :user => current_user)
+    @submission = FileSubmission.new(params[:file_submission])
+    @solution = Solution.find_or_create(:deliverable => @deliverable, :user => current_user) #TODO: Solutions should exist, use find here!
     @solution.submissions << @submission
     if @submission.save
       redirect_to project_path(@deliverable.project), :notice => "Successfully submitted the archive #{@submission.archive_file_name} (#{@submission.id})"

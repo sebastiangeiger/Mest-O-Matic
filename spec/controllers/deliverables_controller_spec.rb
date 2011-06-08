@@ -4,8 +4,14 @@ describe DeliverablesController do
   # render_views
   
   before(:each) do
+    @eit1 = Eit.new
+    @eit2 = Eit.new
+    @eit3 = Eit.new
+    class_of = ClassOf.new
+    class_of.stubs(:eits).returns [@eit1, @eit2, @eit3]
     @project = Project.new(:title => "Project from database")
     @project.stubs(:id).returns(11)
+    @project.stubs(:class_of).returns class_of
     Project.stubs(:find).with(11).returns @project
     @user = User.new
     @user.stubs(:id).returns 53
@@ -47,6 +53,7 @@ describe DeliverablesController do
         controller.expects(:signed_in?).returns true
         controller.expects(:current_user).at_least(1).returns @staff
         Deliverable.any_instance.stubs(:valid?).returns true
+        Deliverable.any_instance.stubs(:eits).returns [] #skip after_create filter
         post :create, :project_id => 11
         flash[:notice].should_not be_empty
         response.should redirect_to("/projects/11")
@@ -138,6 +145,7 @@ describe DeliverablesController do
         it "should create a new deliverable that is part of the current project" do      
           Deliverable.any_instance.stubs(:valid?).returns(true)
           Project.expects(:find).with(11).returns @project
+          Deliverable.any_instance.stubs(:eits).returns [] #skip after_create filter
           post :create, :project_id => 11
           assigns[:project].should == @project
           assigns[:project].deliverables.should include(assigns[:deliverable])
@@ -146,6 +154,14 @@ describe DeliverablesController do
           flash[:notice].should_not be_nil
         end
       
+        it "should create solutions for every eit in the class" #do
+          #Deliverable.any_instance.stubs(:valid?).returns(true)
+          #Project.expects(:find).with(11).returns @project
+          #Deliverable.any_instance.stubs(:eits).returns [@eit1, @eit2, @eit3] 
+          #post :create, :project_id => 11
+          #assigns[:project].should == @project
+          #assigns[:deliverable].solutions.collect{|s| s.user}.should == [@eit1, @eit2, @eit3]
+        #end
       end
       describe "with invalid parameters" do
         it "should render the new template" do

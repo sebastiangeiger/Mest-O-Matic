@@ -66,4 +66,14 @@ describe Project do
     Project.stubs(:all).returns [p1,p2]
     Project.for_user(Staff.new).should == [p1,p2]
   end
+  it "should return all eits from its class_of" do
+    eit1 = Eit.new
+    eit2 = Eit.new
+    @class_of = ClassOf.new
+    @class_of.stubs(:eits).returns [eit1, eit2]
+    @semester = Semester.new
+    @semester.stubs(:class_of).returns @class_of
+    p = Project.new(:title => "Test", :semester => @semester, :start => Date.new)
+    p.eits.should == [eit1,eit2]
+  end
 end

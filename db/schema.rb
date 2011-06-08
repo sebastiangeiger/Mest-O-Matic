@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110601194807) do
+ActiveRecord::Schema.define(:version => 20110607093836) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(:version => 20110601194807) do
     t.integer  "archive_file_size"
     t.datetime "archive_updated_at"
     t.string   "md5_checksum"
+    t.string   "type"
   end
 
   create_table "team_memberships", :force => true do |t|

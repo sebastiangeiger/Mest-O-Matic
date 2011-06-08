@@ -12,6 +12,10 @@ class DeliverablesController < ApplicationController
     @deliverable.author_id = current_user.id
     @project.deliverables << @deliverable
     if params[:commit].eql?("cancel") or @deliverable.save
+      #@project.eits.each do |eit|
+      #  s = Solution.new(:user => eit)
+      #  @deliverable.solutions << s
+      #end
       flash[:notice] = "Successfully created the deliverable #{@deliverable.title}" if @deliverable.save
       redirect_to project_path(@project) 
     else

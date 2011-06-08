@@ -32,7 +32,9 @@ class Project < ActiveRecord::Base
   def Project.types
     SUBTYPES
   end
-
+  def eits
+    semester.class_of.eits
+  end
   def safe_title
     title.gsub(/\s/, "_").camelize.gsub(/[^a-zA-Z0-9]/, "")
   end
