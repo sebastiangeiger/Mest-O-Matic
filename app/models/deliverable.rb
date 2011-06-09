@@ -100,8 +100,8 @@ class Deliverable < ActiveRecord::Base
   end
 
   def versions 
-    versions = {0 => []}
-    current_submissions = []
+    current_submissions = solutions.map{|sol| sol.submissions.first}
+    versions = {0 => current_submissions}
     submissions.select{|sub| sub.is_a?(FileSubmission)}.sort{|a,b| a.created_at <=> b.created_at}.each_with_index do |sub, i|
       current_submissions = Array.new(current_submissions).reject{|s| sub.solution == s.solution}
       current_submissions << sub

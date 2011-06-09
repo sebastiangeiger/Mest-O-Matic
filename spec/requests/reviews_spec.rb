@@ -49,10 +49,9 @@ feature "Review", %q{
     page.should have_content("A past Deliverable for the First Project")
     page.should have_content("Grading Sheet")
     page.should have_content("Another Student")
-    save_and_open_page
-    fill_in("submissions_1_review_attributes_percentage", :with => 99)
-    fill_in("submissions_2_review_attributes_percentage", :with => 75)
-    fill_in("submissions_3_review_attributes_percentage", :with => 60)
+    fill_in("submissions_7_review_attributes_percentage", :with => 99) #TODO: Stop hardcoding ids, sebastian!
+    fill_in("submissions_8_review_attributes_percentage", :with => 75)
+    fill_in("submissions_9_review_attributes_percentage", :with => 60)
     find_button("Save").click
     current_url.should == "http://www.example.com/projects/1/deliverables/1/reviews"
     @sub1.review.percentage.should == 99
@@ -83,8 +82,8 @@ feature "Review", %q{
     page.should have_content("A past Deliverable for the First Project")
     page.should have_content("Grading Sheet")
     page.should have_content("Another Student")
-    fill_in("submissions_1_review_attributes_percentage", :with => 99)
-    fill_in("submissions_2_review_attributes_percentage", :with => 75)
+    fill_in("submissions_7_review_attributes_percentage", :with => 99)
+    fill_in("submissions_8_review_attributes_percentage", :with => 75)
     fill_in("submissions_3_review_attributes_percentage", :with => 60)
     find_button("Save").click
     current_url.should == "http://www.example.com/projects/1/deliverables/1/reviews"

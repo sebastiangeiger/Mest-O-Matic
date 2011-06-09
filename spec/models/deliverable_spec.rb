@@ -65,6 +65,8 @@ describe Deliverable do
     Deliverable.create(:title => "Some deliverable", :project => @project, :start_date => Time.now+1.day, :end_date => Time.now, :author => @author).should_not be_valid    
   end
   
+  it "should create a solution per user, each solution should have one submission"
+
   describe "#versions" do
     before(:each) do
       @deliverable = Deliverable.create(:title => "Some deliverable", :project => @project, :start_date => Time.now-1.day, :end_date => Time.now, :author => @author)
@@ -75,60 +77,60 @@ describe Deliverable do
       @d1 = DateTime.now-1.hour
       @d2 = DateTime.now-30.minutes
       @d3 = DateTime.now-5.minutes
+      @zipFile = File.new(Rails.root + 'spec/fixtures/files/zip_file.zip')
     end
 
-    it "should have one version if there is no solution" do
-      @deliverable.stubs(:submissions).returns []
-      @deliverable.versions.should == {0 => []}
+    it "should have one version if there is no file submitted" do
+      solution = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      s = Submission.create(:solution => solution)
+      @deliverable.stubs(:solutions).returns [solution]
+      @deliverable.versions.should == {0 => [s]}
     end
-    it "should have two versions if one solution with one submission exists" do
-      solution = Solution.new(:deliverable => @deliverable, :user => @eit1)
-      submission = FileSubmission.new(:solution => solution)
-      submission.stubs(:created_at).returns @d1
-      @deliverable.stubs(:submissions).returns [submission]
-      @deliverable.versions.should == {0 => [], 1 => [submission]}
+    it "should have two versions if there is one file submitted exists" do
+      solution = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      s =      Submission.create(:solution => solution)
+      fs = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      @deliverable.stubs(:solutions).returns [solution]
+      @deliverable.versions.should == {0 => [s], 1 => [fs]}
     end
-    it "should have three versions if two submissions by one user exist, one submission is replaced by the newer one" do
-      solution = Solution.new(:deliverable => @deliverable, :user => @eit1)
-      s1 = FileSubmission.new(:solution => solution)
-      s1.stubs(:created_at).returns @d1
-      s2 = FileSubmission.new(:solution => solution)
-      s2.stubs(:created_at).returns @d2
-      @deliverable.stubs(:submissions).returns [s1,s2]
-      @deliverable.versions.should == {0 => [], 1 => [s1], 2 => [s2]}
+    it "should have three versions if two submissions by one user exist, one submission is replaced by the createer one" do
+      solution = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      s   =     Submission.create(:solution => solution)
+      fs1 = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      fs2 = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      @deliverable.stubs(:solutions).returns [solution]
+      @deliverable.versions.should == {0 => [s], 1 => [fs1], 2 => [fs2]}
     end
     it "should have three versions if two submissions on two solutions exist" do
-      sol1 = Solution.new(:deliverable => @deliverable, :user => @eit1)
-      sol2 = Solution.new(:deliverable => @deliverable, :user => @eit2)
-      s1 = FileSubmission.new(:solution => sol1)
-      s1.stubs(:created_at).returns @d1
-      s2 = FileSubmission.new(:solution => sol2)
-      s2.stubs(:created_at).returns @d2
-      @deliverable.stubs(:submissions).returns [s1,s2]
-      @deliverable.versions.should == {0 => [], 1 => [s1], 2 => [s1,s2]}
+      sol1 = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      sol2 = Solution.create(:deliverable => @deliverable, :user => @eit2)
+      s1  =     Submission.create(:solution => sol1)
+      s2  =     Submission.create(:solution => sol2)
+      fs1 = FileSubmission.create(:solution => sol1, :archive => @zipFile)
+      fs2 = FileSubmission.create(:solution => sol2, :archive => @zipFile)
+      @deliverable.stubs(:solutions).returns [sol1,sol2]
+      @deliverable.stubs(:submissions).returns [s1,s2,fs1,fs2]
+      @deliverable.versions.should == {0 => [s1,s2], 1 => [s2,fs1], 2 => [fs1,fs2]}
     end
-    it "should have three versions if three submissions by one user exist, one submission is replaced by the newer one" do
-      solution = Solution.new(:deliverable => @deliverable, :user => @eit1)
-      s1 = FileSubmission.new(:solution => solution)
-      s1.stubs(:created_at).returns @d1
-      s2 = FileSubmission.new(:solution => solution)
-      s2.stubs(:created_at).returns @d2
-      s3 = FileSubmission.new(:solution => solution)
-      s3.stubs(:created_at).returns @d3
-      @deliverable.stubs(:submissions).returns [s1,s2,s3]
-      @deliverable.versions.should == {0 => [], 1 => [s1], 2 => [s2], 3 => [s3]}
+    it "should have three versions if three submissions by one user exist, one submission is replaced by the createer one" do
+      solution = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      s   =     Submission.create(:solution => solution)
+      fs1 = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      fs2 = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      fs3 = FileSubmission.create(:solution => solution, :archive => @zipFile)
+      @deliverable.stubs(:submissions).returns [s,fs1,fs2,fs3]
+      @deliverable.versions.should == {0 => [s], 1 => [fs1], 2 => [fs2], 3 => [fs3]}
     end
     it "should have one version if two solutions, one with one and one with two submission exists" do
-      sol1 = Solution.new(:deliverable => @deliverable, :user => @eit1)
-      sol2 = Solution.new(:deliverable => @deliverable, :user => @eit2)
-      s1 = FileSubmission.new(:solution => sol1)
-      s1.stubs(:created_at).returns @d1
-      s2 = FileSubmission.new(:solution => sol2)
-      s2.stubs(:created_at).returns @d2
-      s3 = FileSubmission.new(:solution => sol1)
-      s3.stubs(:created_at).returns @d3
-      @deliverable.stubs(:submissions).returns [s1,s3,s2]
-      @deliverable.versions.should == {0 => [], 1 => [s1], 2 => [s1,s2], 3 => [s2,s3]}
+      sol1 = Solution.create(:deliverable => @deliverable, :user => @eit1)
+      sol2 = Solution.create(:deliverable => @deliverable, :user => @eit2)
+      s1  =     Submission.create(:solution => sol1)
+      s2  =     Submission.create(:solution => sol2)
+      fs1 = FileSubmission.create(:solution => sol1, :archive => @zipFile)
+      fs2 = FileSubmission.create(:solution => sol2, :archive => @zipFile)
+      fs3 = FileSubmission.create(:solution => sol1, :archive => @zipFile)
+      @deliverable.stubs(:submissions).returns [s1,s2,fs1,fs3,fs2]
+      @deliverable.versions.should == {0 => [s1,s2], 1 => [s2,fs1], 2 => [fs1,fs2], 3 => [fs2,fs3]}
     end
   end
   describe "#download_version" do
