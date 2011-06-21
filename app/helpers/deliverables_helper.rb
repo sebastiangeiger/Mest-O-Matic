@@ -11,24 +11,33 @@ module DeliverablesHelper
   def status_icon(deliverable, user)
     if deliverable.current? then
       if deliverable.submitted?(user) then
-        haml_tag :img, :src => "/icons/document-tick.png", :alt => "You submitted a version."
+        haml_tag :img, :src => "/icons/submitted.png", :alt => "You submitted a version."
       else
-        haml_tag :img, :src => "/icons/document-cross.png", :alt => "You did not submit a version yet."
+        haml_tag :img, :src => "/icons/notsubmitted.png", :alt => "You did not submit a version yet."
       end
     elsif deliverable.ended? and deliverable.not_graded_yet? then
       if deliverable.submitted?(user) then
         haml_tag :img, :src => "/icons/clock.png", :alt => "Grading in progress."
+        haml_tag :img, :src => "/icons/submitted.png", :alt => "You submitted a version." if deliverable.submitted_on_time?(user)
+        haml_tag :img, :src => "/icons/submitted-late.png", :alt => "You submitted a version." if deliverable.submitted_too_late?(user)
       else
-        haml_tag :img, :src => "/icons/document-cross.png", :alt => "You did not submit a version yet."
+        haml_tag :img, :src => "/icons/notsubmitted-late.png", :alt => "You did not submit a version yet."
       end
-    elsif deliverable.graded?
-      haml_tag "div", "11 %"
+    elsif deliverable.graded? and deliverable.not_closed_yet?
+      if deliverable.review_for(user)
+        haml_tag :img, :src => "/icons/exclamation.png", :alt => "You submitted too late."
+        haml_tag :span, "#{deliverable.review_for(user).percentage}%" 
+      else
+        haml_tag :img, :src => "/icons/notsubmitted-late.png", :alt => "You did not submit a version yet."
+      end
+    elsif deliverable.closed?
+      if deliverable.review_for(user)
+        haml_tag :img, :src => "/icons/exclamation.png", :alt => "You submitted too late."
+        haml_tag :span, "#{deliverable.review_for(user).percentage}%" 
+      else
+        haml_tag :img, :src => "/icons/failed-closed.png", :alt => "You did not submit a version yet."
+      end
     end
   end
 
-  def on_time_icon(deliverable, user)
-    if deliverable.submitted_too_late?(user) or deliverable.not_submitted?(user) and deliverable.ended? then
-      haml_tag :img, :src => "/icons/exclamation.png", :alt => "You submitted too late."
-    end
-  end
 end

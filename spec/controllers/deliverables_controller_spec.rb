@@ -153,15 +153,6 @@ describe DeliverablesController do
           response.should redirect_to(project_path(@project))
           flash[:notice].should_not be_nil
         end
-      
-        it "should create solutions for every eit in the class" #do
-          #Deliverable.any_instance.stubs(:valid?).returns(true)
-          #Project.expects(:find).with(11).returns @project
-          #Deliverable.any_instance.stubs(:eits).returns [@eit1, @eit2, @eit3] 
-          #post :create, :project_id => 11
-          #assigns[:project].should == @project
-          #assigns[:deliverable].solutions.collect{|s| s.user}.should == [@eit1, @eit2, @eit3]
-        #end
       end
       describe "with invalid parameters" do
         it "should render the new template" do

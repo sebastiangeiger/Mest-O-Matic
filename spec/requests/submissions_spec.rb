@@ -18,7 +18,7 @@ feature "Submission", %q{
     a1 = Assignment.create(:title => "First Project", :semester => s2023, :start => DateTime.parse("2021-09-01T09:00+00:00"))
     a2 = Quiz.create(:title => "Second Project", :semester => s2023, :start => DateTime.parse("2021-09-01T09:00+00:00"))
     a3 = Assignment.create(:title => "Third Project", :semester => s2022, :start => DateTime.parse("2021-09-01T09:00+00:00"))
-    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => DateTime.parse("2021-09-01T09:00+00:00"), :end_date => DateTime.parse("2021-09-08T09:00+00:00"), :project => a1, :author => staff)
+    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now-3.weeks, :end_date => Time.now+5.days, :project => a1, :author => staff)
   end
 
   scenario "Go to a project site, no deliverable has been added yet. Add a submission, come back, the site tells you that there is one version submitted, then do it over again, shows you two versions" do

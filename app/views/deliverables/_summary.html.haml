@@ -6,8 +6,6 @@
 			= "(#{time_span_to_due_date_in_words(deliverable)})" if deliverable.end_date
 		%span.status_icon
 			- status_icon(deliverable, current_user)
-		%span.on_time_icon
-			- on_time_icon(deliverable, current_user)
 	.body
 		%ul
 			%li

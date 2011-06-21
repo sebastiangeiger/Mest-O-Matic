@@ -1,17 +1,19 @@
 # == Schema Information
-# Schema version: 20110517132702
+# Schema version: 20110616104908
 #
 # Table name: deliverables
 #
-#  id          :integer         not null, primary key
-#  title       :string(255)
-#  description :string(255)
-#  start_date  :datetime
-#  end_date    :datetime
-#  project_id  :integer
-#  created_at  :datetime
-#  updated_at  :datetime
-#  author_id   :integer
+#  id             :integer         not null, primary key
+#  title          :string(255)
+#  description    :string(255)
+#  start_date     :datetime
+#  end_date       :datetime
+#  project_id     :integer
+#  created_at     :datetime
+#  updated_at     :datetime
+#  author_id      :integer
+#  graded         :boolean
+#  last_graded_at :date
 #
 
 class Deliverable < ActiveRecord::Base
@@ -53,6 +55,11 @@ class Deliverable < ActiveRecord::Base
   def start_date_must_be_before_end_date
     errors.add(:end_date, 'must be after start date') if start_date and end_date and start_date >= end_date
   end
+
+  def visible?(user)
+    return true if user.staff?
+    start_date < Time.now
+  end
   
   def current?
     end_date > DateTime.now
@@ -62,14 +69,22 @@ class Deliverable < ActiveRecord::Base
     not current?
   end
   
-  def graded?
-    false
-  end
-  
   def not_graded_yet?
     not graded?
   end
-  
+
+  def reviews_missing? 
+    latest_version.select{|sub| sub.review.nil?}.size > 0
+  end
+
+  def closed?
+    graded? and end_date < Time.now - 1.months
+  end
+
+  def not_closed_yet?
+    not closed?
+  end
+
   def submissions_for(by_user)
     user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
     if user_solution
@@ -79,6 +94,12 @@ class Deliverable < ActiveRecord::Base
     end
   end
   
+  def review_for(by_user)
+    user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
+    reviewed_solution = user_solution.submissions.select{|s| s.review}.sort{|a,b| a.updated_at <=> b.updated_at}.first
+    reviewed_solution.review if reviewed_solution
+  end
+
   def not_submitted?(by_user)
     submissions_for(by_user).empty?
   end

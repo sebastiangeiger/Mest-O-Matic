@@ -15,4 +15,8 @@
 class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :reviewer, :class_name => "Staff", :foreign_key => "reviewer_id"
+
+  validates :submission, :presence => true
+  validates :reviewer, :presence => true
+  validates_uniqueness_of :submission_id
 end

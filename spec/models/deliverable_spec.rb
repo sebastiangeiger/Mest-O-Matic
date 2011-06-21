@@ -2,14 +2,14 @@ require_relative '../spec_helper.rb'
 
 describe Deliverable do
   before(:each) do
-    class_of = ClassOf.new
-    class_of.stubs(:eits).returns []
+    @class_of = ClassOf.new
+    @class_of.stubs(:eits).returns []
     @project = Project.new
     @project.stubs(:id).returns(1)
     @project_2 = Project.new
     @project_2.stubs(:id).returns(2)
-    @project.stubs(:class_of).returns class_of
-    @project_2.stubs(:class_of).returns class_of
+    @project.stubs(:class_of).returns @class_of
+    @project_2.stubs(:class_of).returns @class_of
     @author = User.new
   end
   
@@ -65,7 +65,28 @@ describe Deliverable do
     Deliverable.create(:title => "Some deliverable", :project => @project, :start_date => Time.now+1.day, :end_date => Time.now, :author => @author).should_not be_valid    
   end
   
-  it "should create a solution per user, each solution should have one submission"
+  it "should create one solution if there is one user, the solution should have one submission" do
+    eit = Eit.new
+    eit.stubs(:id).returns 42
+    @class_of.stubs(:eits).returns [eit]
+    d = Deliverable.create(:title => "Some deliverable", :project => @project, :start_date => Time.now-1.day, :end_date => Time.now, :author => @author)
+    d.should be_valid
+    d.solutions.size.should == 1
+    d.solutions.first.submissions.size.should == 1
+  end
+
+  it "should create two solutions if there are two users, both solutions should have one submission" do
+    eit = Eit.new
+    eit.stubs(:id).returns 42
+    eit2 = Eit.new
+    eit2.stubs(:id).returns 43
+    @class_of.stubs(:eits).returns [eit, eit2]
+    d = Deliverable.create(:title => "Some deliverable", :project => @project, :start_date => Time.now-1.day, :end_date => Time.now, :author => @author)
+    d.should be_valid
+    d.solutions.size.should == 2
+    d.solutions[0].submissions.size.should == 1
+    d.solutions[1].submissions.size.should == 1
+  end
 
   describe "#versions" do
     before(:each) do
@@ -173,5 +194,58 @@ describe Deliverable do
       @sol.stubs(:submissions).returns [sub]
       @del.eits_submitted.should == [@eit1] 
     end
+  end
+  
+  describe "#reviews_missing?" do
+    before(:each) do
+      @del = Deliverable.new
+      @rev1 = Review.new
+      @rev2 = Review.new
+      @sub1 = Submission.new
+      @sub2 = Submission.new
+      @sub1.stubs(:review).returns @rev1
+      @sub2.stubs(:review).returns @rev2
+      @del.stubs(:latest_version).returns [@sub1, @sub2]
+    end
+    it "should return true if one of the revisions is nil" do
+      @sub1.stubs(:review).returns nil
+      @sub2.stubs(:review).returns nil
+      @del.reviews_missing?.should == true
+    end
+    it "should return true if both revision are nil" do
+      @sub1.stubs(:review).returns nil
+      @del.reviews_missing?.should == true
+    end
+    it "should return false if both revision are there" do 
+      @del.reviews_missing?.should == false
+    end
+  end
+
+  describe "#closed?" do
+    before(:each) do
+      @del = Deliverable.new
+      @del.start_date = Time.now - 7.days
+      @rev1 = Review.new
+      @rev2 = Review.new
+      @rev1.stubs(:updated_at).returns (Time.now - 1.month - 1.day)
+      @rev2.stubs(:updated_at).returns (Time.now - 1.month - 1.day - 1.minutes)
+      @sub1 = Submission.new
+      @sub2 = Submission.new
+      @sub1.stubs(:review).returns @rev1
+      @sub2.stubs(:review).returns @rev2
+      @del.stubs(:latest_version).returns [@sub1, @sub2]
+    end
+
+    it "should return false if there are two submissions but only one has a review" do
+      @sub2.stubs(:review).returns nil
+      @del.should_not be_closed
+    end
+    it "should return false if all submissions have a review but the last time a review has been updated is only two weeks ago" do
+      @rev1.stubs(:updated_at).returns (Time.now - 2.weeks)
+      @del.should_not be_closed
+    end
+    it "should return true if there all submissions have review and they both have been updated one month and one day ago"# do
+      #@del.should be_closed
+    #end
   end
 end

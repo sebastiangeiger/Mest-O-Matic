@@ -20,6 +20,6 @@
 	- else
 		Not assigned to a team yet.
 %h2
-	= "Deliverables (#{@project.deliverables.count})"
+	= "Deliverables (#{@project.deliverables.select{|d| d.visible?(current_user)}.count})"
 	= link_to "+", new_project_deliverable_path(@project) if current_user.staff?
-= render :partial => "deliverables/summary", :collection => @project.deliverables.sort{|a,b| a.end_date <=> b.end_date}, :as => :deliverable
+= render :partial => "deliverables/summary", :collection => @project.deliverables.sort{|a,b| a.end_date <=> b.end_date}.select{|d| d.visible?(current_user)}, :as => :deliverable
