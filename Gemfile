@@ -12,7 +12,7 @@ gem "paperclip", "~> 2.3" #file attachments
 # gem 'unicorn'
 
 # Deploy with Capistrano
-# gem 'capistrano'
+gem 'capistrano'
 
 # To use debugger (ruby-debug for Ruby 1.8.7+, ruby-debug19 for Ruby 1.9.2+)
 # gem 'ruby-debug'
@@ -52,4 +52,7 @@ group :test do
  	gem "launchy"
 end
 
+group :deployment do
+  gem "passenger"
+end
 

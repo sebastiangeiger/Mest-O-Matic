@@ -1,6 +1,8 @@
 task :annotate_models do
-  require 'annotate_models'
-  AnnotateModels.do_annotations
+  if RAILS_ENV == 'development' then
+    require 'annotate_models'
+    AnnotateModels.do_annotations
+  end
 end
 
 task "db:migrate" do
