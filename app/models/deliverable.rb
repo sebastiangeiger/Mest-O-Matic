@@ -56,9 +56,13 @@ class Deliverable < ActiveRecord::Base
     errors.add(:end_date, 'must be after start date') if start_date and end_date and start_date >= end_date
   end
 
+  def invisible?
+    start_date >= Time.now
+  end
+
   def visible?(user)
     return true if user.staff?
-    start_date < Time.now
+    not invisible?
   end
   
   def current?
