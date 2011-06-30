@@ -5,6 +5,8 @@ module AuthorizationHelper
       flash[:error] = "Not enough privileges"
       redirect_to :back
     end
+  rescue ActionController::RedirectBackError
+    redirect_to root_path
   end
 
   def require_eit
@@ -12,6 +14,8 @@ module AuthorizationHelper
       flash[:error] = "Need to be EIT"
       redirect_to :back
     end
+  rescue ActionController::RedirectBackError
+    redirect_to root_path
   end
   
   def require_staff_or_eit
@@ -19,6 +23,8 @@ module AuthorizationHelper
       flash[:error] = "Need to be EIT or staff"
       redirect_to :back
     end
+  rescue ActionController::RedirectBackError
+    redirect_to root_path
   end  
   
   def ensure_project_visible_to_eit
