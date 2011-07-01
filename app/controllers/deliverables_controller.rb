@@ -26,8 +26,9 @@ class DeliverablesController < ApplicationController
 
   def download
     deliverable = Deliverable.find(params[:id])
+    VersionDownload.create(:deliverable => deliverable, :version_nr => deliverable.latest_version_nr, :downloader => current_user)
     send_file deliverable.download_latest_version
-    redirect_to project_path(@project)
+    #redirect_to project_path(@project)
   end
 
   private

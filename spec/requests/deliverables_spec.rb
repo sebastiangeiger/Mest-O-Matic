@@ -299,5 +299,33 @@ feature "Deliverable", %q{
     page.should have_xpath("//img[@src='/icons/done.png']")
   end
 
-  scenario "Login as Staff, show a project, User enters grades for a deliverable, a done icon is shown, then an eit submits something, the Staff comes back it shows an x mark, he corrects the grade and a tick mark is shown again" 
+  scenario "Login as Staff, show a project, Staff member enters grades for a deliverable, a done icon is shown, then an eit submits something, the Staff comes back it shows an x mark, he corrects the grade and a tick mark is shown again" 
+
+  scenario "Login as Staff, show a project, two versions have been submitted, so a download link is displayed that shows Version 2" do
+    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now + 1.day, :project => @a1, :author => @staff)
+    e3 = Eit.create(:first_name => "Some", :last_name => "Student", :identifier_url => "http://someidentifier.url/ijkl", :email => "some.student@meltwater.org", :class_of => @c2023)
+    sol1 = Solution.create(:user => e3, :deliverable => d1)
+    sol2 = Solution.create(:user => @e1, :deliverable => d1)
+    FileSubmission.create(:solution => sol1, :archive => @zipFile)
+    FileSubmission.create(:solution => sol2, :archive => @zipFile)
+    visit "/testlogin/3"
+    visit "/projects/1"
+    page.should have_content("Version 2")
+  end 
+
+  scenario "Login as Staff, show a project, two versions have been submitted, so a download link is displayed that shows Version 2" do
+    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now + 1.day, :project => @a1, :author => @staff)
+    e3 = Eit.create(:first_name => "Some", :last_name => "Student", :identifier_url => "http://someidentifier.url/ijkl", :email => "some.student@meltwater.org", :class_of => @c2023)
+    sol1 = Solution.create(:user => e3, :deliverable => d1)
+    sol2 = Solution.create(:user => @e1, :deliverable => d1)
+    FileSubmission.create(:solution => sol1, :archive => @zipFile)
+    FileSubmission.create(:solution => sol2, :archive => @zipFile)
+    visit "/testlogin/3"
+    visit "/projects/1"
+    page.should have_content("Version 2")
+    page.should have_content("Never downloaded") 
+    find_link("Download all Submissions (Version 2)").click
+    visit "/projects/1"
+    page.should have_content("Downloaded") 
+  end 
 end

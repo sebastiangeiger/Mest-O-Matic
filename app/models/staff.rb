@@ -17,4 +17,9 @@
 
 class Staff < User
   has_many :reviews
+  has_many :version_downloads
+
+  def latest_version_downloaded(deliverable)
+    VersionDownload.where(:downloader_id => self.id, :deliverable_id => deliverable.id, :version_nr => deliverable.latest_version_nr).first
+  end
 end

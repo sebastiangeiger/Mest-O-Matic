@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110616104908) do
+ActiveRecord::Schema.define(:version => 20110701140102) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -114,5 +114,13 @@ ActiveRecord::Schema.define(:version => 20110616104908) do
   end
 
   add_index "users", ["identifier_url"], :name => "index_users_on_identifier_url", :unique => true
+
+  create_table "version_downloads", :force => true do |t|
+    t.integer  "version_nr"
+    t.integer  "deliverable_id"
+    t.integer  "downloader_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

@@ -86,6 +86,7 @@ describe DeliverablesController do
         controller.expects(:signed_in?).returns true
         controller.expects(:current_user).at_least(1).returns @staff
         @deliverable.expects(:download_latest_version) #TODO: Is also functional test?!
+        controller.stubs(:render) #otherwise send_file does not work
         controller.expects(:send_file)
         get :download, :project_id => 11, :id => 10
       end
@@ -163,6 +164,19 @@ describe DeliverablesController do
           assigns[:deliverable].should be_new_record
           flash[:notice].should be_nil
         end      
+      end
+    end
+    describe "responding to GET download" do
+      it "should download something" do
+        @del = Deliverable.new
+        @del.stubs(:latest_version_nr).returns 13
+        @del.stubs(:id).returns 10
+        @del.stubs(:download_version).returns "/some/path"
+        Deliverable.expects(:find).with(10).returns @del
+        controller.stubs(:render) #otherwise send_file does not work
+        controller.expects(:send_file).with("/some/path")
+        VersionDownload.expects(:create).with({:deliverable => @del, :downloader => @staff, :version_nr => 13})
+        get :download, :project_id => 11, :id => 10
       end
     end
   end#Functional

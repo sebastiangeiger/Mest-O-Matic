@@ -174,7 +174,7 @@ class Deliverable < ActiveRecord::Base
         #Copy everything into dest_folder
         versions[nr].each do |sub| 
           user_dest = File.join(dest_folder, "#{sub.user.identifier_name}_#{sub.version}") 
-          FileUtils.cp_r(sub.unzipped_path, user_dest)
+          FileUtils.cp_r(sub.unzipped_path, user_dest) if sub.is_a? FileSubmission and not RAILS_ENV == 'test' #TODO: Find a way to test uploads!
         end 
         #Create zipfile out of dest_folder
         Zip::Archive.open(zipped_file, Zip::CREATE) do |ar| 
