@@ -23,8 +23,8 @@ group :development do
   gem 'annotate-models'
   gem 'mongrel', '1.2.0.pre2'         #getting WEBrick::HTTPStatus::RequestURITooLarge in conjunction with openid
   gem "rspec-rails", "~>2.3"
+  gem "railroady"
 end
-
 
 group :test do
 	gem "rspec-rails", "~>2.3"
