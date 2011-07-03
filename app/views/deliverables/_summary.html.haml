@@ -19,7 +19,10 @@
 			%li= "The deadline #{deliverable.current? ? "is" : "was"} on #{deliverable.end_date}"			
 			%li= "This deliverable was last changed on #{deliverable.updated_at} by #{deliverable.author.name}"
 		%p
-			= link_to "Download all Submissions (Version #{deliverable.versions.keys.max})", download_project_deliverable_path(deliverable.project, deliverable) if current_user.staff? and deliverable.versions.keys.max >= 1
-			= current_user.latest_version_downloaded(deliverable) ? "Downloaded" : "Never downloaded" if current_user.staff?
+			- if current_user.staff? then
+				- if deliverable.versions.keys.max >= 1 then
+					%p
+						= link_to "Download all Submissions (Version #{deliverable.versions.keys.max})", download_project_deliverable_path(deliverable.project, deliverable)
+						= current_user.latest_version_downloaded(deliverable) ? "Downloaded" : "Never downloaded" 
+				= link_to "Enter Grades", project_deliverable_reviews_path(deliverable.project, deliverable) if deliverable.ended?
 			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable) if current_user.eit?
-			= link_to "Enter Grades", project_deliverable_reviews_path(deliverable.project, deliverable)  if current_user.staff? and deliverable.ended?
