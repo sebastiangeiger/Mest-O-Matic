@@ -22,4 +22,10 @@ class Staff < User
   def latest_version_downloaded(deliverable)
     VersionDownload.where(:downloader_id => self.id, :deliverable_id => deliverable.id, :version_nr => deliverable.latest_version_nr).first
   end
+  
+  def latest_downloaded_version_nr(deliverable)
+    lv = VersionDownload.where(:downloader_id => self.id, :deliverable_id => deliverable.id).all.sort{|a,b| a.version_nr <=> b.version_nr}.last
+    return 0 if lv.nil?
+    lv.version_nr
+  end
 end

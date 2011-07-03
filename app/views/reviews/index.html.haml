@@ -14,5 +14,11 @@
           %td= rev_f.label :user, submission.user
           %td= rev_f.text_field :percentage
           %td= rev_f.text_area :remarks
-        
+  %p
+    - if (cv = current_user.latest_downloaded_version_nr(@deliverable)) < @deliverable.latest_version_nr and @deliverable.latest_version_nr > 0 then
+      - if cv > 0
+        = "The latest version you downloaded is #{cv}, however the current version is #{@deliverable.latest_version_nr}"  
+      - else
+        = "You never downloaded the submissions, the current version is #{@deliverable.latest_version_nr}."  
+      = link_to "Download latest version", download_project_deliverable_path(@deliverable.project, @deliverable)
   #button= submit_tag "Save"

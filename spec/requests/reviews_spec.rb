@@ -11,16 +11,16 @@ feature "Review", %q{
     olderClass = ClassOf.create(:year => DateTime.now.year)
     thirdSemester = Semester.create(:class_of => olderClass, :nr => 3)
     youngerClass = ClassOf.create(:year => DateTime.now.year+1)
-    firstSemester = Semester.create(:class_of => youngerClass, :nr => 1)
-    staff = Staff.create(:first_name => "Staff", :last_name => "Member",  :identifier_url => "http://someidentifier.url/1234", :email => "staff.member@meltwater.org")
+    @firstSemester = Semester.create(:class_of => youngerClass, :nr => 1)
+    @staff = Staff.create(:first_name => "Staff", :last_name => "Member",  :identifier_url => "http://someidentifier.url/1234", :email => "staff.member@meltwater.org")
          Eit.create(:first_name => "Some",    :last_name => "Student", :identifier_url => "http://someidentifier.url/abdc", :email => "some.eit@meltwater.org",    :class_of => olderClass)
     e1 = Eit.create(:first_name => "Another", :last_name => "Student", :identifier_url => "http://someidentifier.url/efgh", :email => "another.eit@meltwater.org", :class_of => youngerClass)
     e2 = Eit.create(:first_name => "Second",  :last_name => "Student", :identifier_url => "http://someidentifier.url/ijkl", :email => "second.eit@meltwater.org",  :class_of => youngerClass)
     @e3 = Eit.create(:first_name => "Third",   :last_name => "Student", :identifier_url => "http://someidentifier.url/mnop", :email => "third.eit@meltwater.org",   :class_of => youngerClass)
     @second_staff = Staff.create(:first_name => "Another", :last_name => "Staff",  :identifier_url => "http://someidentifier.url/4567", :email => "another.staff@meltwater.org")
-    a1 = Assignment.create(:title => "First Project", :semester => firstSemester, :start => DateTime.now-1.weeks)
-    @d1 = Deliverable.create(:title => "A past Deliverable for the First Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a1, :author => staff)
-    d2 = Deliverable.create(:title => "A future Deliverable for the First Project", :start_date => DateTime.now-1.days, :end_date => DateTime.now+2.hours, :project => a1, :author => staff)
+    a1 = Assignment.create(:title => "First Project", :semester => @firstSemester, :start => DateTime.now-1.weeks)
+    @d1 = Deliverable.create(:title => "A past Deliverable for the First Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a1, :author => @staff)
+    d2 = Deliverable.create(:title => "A future Deliverable for the First Project", :start_date => DateTime.now-1.days, :end_date => DateTime.now+2.hours, :project => a1, :author => @staff)
     sol1 = Solution.where(:deliverable_id => @d1.id, :user_id => e1.id).first
     sol2 = Solution.where(:deliverable_id => @d1.id, :user_id => e2.id).first
     @sol3 = Solution.where(:deliverable_id => @d1.id, :user_id => @e3.id).first
@@ -71,6 +71,48 @@ feature "Review", %q{
     page.should_not have_content("This deliverable was created by Staff Member. Are you sure you want to grade it?")
   end
 
+  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The site should not show a warning." do
+    a2 = Assignment.create(:title => "Second Project", :semester => @firstSemester, :start => DateTime.now-1.weeks)
+    d3 = Deliverable.create(:title => "A past Deliverable for the Second Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a2, :author => @staff)
+    visit "/testlogin/1"
+    visit "/projects/2"
+    page.should have_content("Second")
+    find_link("Enter Grades").click
+    page.should_not have_content("however the current version is")
+    page.should_not have_content("latest version")
+    page.should_not have_content("Download")
+  end
+
+  scenario "Login as a staff member, you never downloaded a version and there were three submissions. The site should show a warning." do
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Enter Grades").click
+    page.should have_content("You never downloaded")
+    page.should have_content("Download")
+  end
+
+  scenario "Login as a staff member, you downloaded version one and there were two submissions. The site should show a warning." do
+    cd = VersionDownload.create(:deliverable => @d1, :version_nr => 1, :downloader => @staff)
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Enter Grades").click
+    page.should have_content("1, however the current version is 2")
+    page.should have_content("Download")
+  end
+
+  scenario "Login as a staff member, you downloaded version two and there were two submissions. The site should not show a warning." do
+    cd = VersionDownload.create(:deliverable => @d1, :version_nr => 2, :downloader => @staff)
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Enter Grades").click
+    page.should_not have_content("however the current version is")
+    page.should_not have_content("latest version")
+    page.should_not have_content("Download")
+  end
+
   scenario "Only two out of three Eits have handed in a submission. I Login as a staff member, go to a valid deliverable review site, it has boxes for all three eits" do
     visit "/testlogin/1"
     visit "/projects/1"
@@ -98,7 +140,6 @@ feature "Review", %q{
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
     page.should have_link("Enter Grades", :href => "/projects/1/deliverables/1/reviews")
-    save_and_open_page
     find_link("Enter Grades").click
     current_url.should == "http://www.example.com/projects/1/deliverables/1/reviews"
     page.should have_content("First Project")
@@ -131,15 +172,15 @@ feature "Review", %q{
     thirdSemester = Semester.create(:class_of => olderClass, :nr => 3)
     youngerClass = ClassOf.create(:year => DateTime.now.year+1)
     firstSemester = Semester.create(:class_of => youngerClass, :nr => 1)
-    staff = Staff.create(:first_name => "Staff", :last_name => "Member",  :identifier_url => "http://someidentifier.url/1234", :email => "staff.member@meltwater.org")
+    @staff = Staff.create(:first_name => "Staff", :last_name => "Member",  :identifier_url => "http://someidentifier.url/1234", :email => "staff.member@meltwater.org")
          Eit.create(:first_name => "Some",    :last_name => "Student", :identifier_url => "http://someidentifier.url/abdc", :email => "some.eit@meltwater.org",    :class_of => olderClass)
     e1 = Eit.create(:first_name => "Another", :last_name => "Student", :identifier_url => "http://someidentifier.url/efgh", :email => "another.eit@meltwater.org", :class_of => youngerClass)
     e2 = Eit.create(:first_name => "Second",  :last_name => "Student", :identifier_url => "http://someidentifier.url/ijkl", :email => "second.eit@meltwater.org",  :class_of => youngerClass)
     @e3 = Eit.create(:first_name => "Third",   :last_name => "Student", :identifier_url => "http://someidentifier.url/mnop", :email => "third.eit@meltwater.org",   :class_of => youngerClass)
     @second_staff = Staff.create(:first_name => "Another", :last_name => "Staff",  :identifier_url => "http://someidentifier.url/4567", :email => "another.staff@meltwater.org")
     a1 = Assignment.create(:title => "First Project", :semester => firstSemester, :start => DateTime.now-1.weeks)
-    @d1 = Deliverable.create(:title => "A past Deliverable for the First Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a1, :author => staff)
-    d2 = Deliverable.create(:title => "A future Deliverable for the First Project", :start_date => DateTime.now-1.days, :end_date => DateTime.now+2.hours, :project => a1, :author => staff)
+    @d1 = Deliverable.create(:title => "A past Deliverable for the First Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a1, :author => @staff)
+    d2 = Deliverable.create(:title => "A future Deliverable for the First Project", :start_date => DateTime.now-1.days, :end_date => DateTime.now+2.hours, :project => a1, :author => @staff)
     sol1 = Solution.where(:deliverable_id => @d1.id, :user_id => e1.id).first
     sol2 = Solution.where(:deliverable_id => @d1.id, :user_id => e2.id).first
     @sol3 = Solution.where(:deliverable_id => @d1.id, :user_id => @e3.id).first
@@ -154,7 +195,6 @@ feature "Review", %q{
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
     page.should_not have_link("Enter Grades")
-    save_and_open_page
   end
   scenario "Login as Eit, try to access the review page, get turned down and redirected to the previous page" do
     visit "/testlogin/3"
