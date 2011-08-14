@@ -2,9 +2,10 @@
 %h2 Grading Sheet
 %h3= "This deliverable was created by #{@deliverable.author.name}. Are you sure you want to grade it?" unless current_user.eql?(@deliverable.author) 
 = form_tag mass_create_project_deliverable_reviews_path(@deliverable.project, @deliverable) do 
-  %table
+  %table{:border => 1} 
     %tr
       %th Name
+      %th Revision
       %th Grade
       %th Remarks
 
@@ -12,6 +13,7 @@
       %tr
         = fields_for "submissions[#{submission.id}][review_attributes]", submission.review do |rev_f|
           %td= rev_f.label :user, submission.user
+          %td= rev_f.label :version, submission.version
           %td= rev_f.text_field :percentage
           %td= rev_f.text_area :remarks
   %p
