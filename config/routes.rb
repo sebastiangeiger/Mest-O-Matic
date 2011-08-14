@@ -12,6 +12,8 @@ MestOMatic::Application.routes.draw do
     resources :deliverables do
       member do
         get 'download'
+        get 'upload'
+        post 'process_upload'
       end
       resources :reviews do
         collection do

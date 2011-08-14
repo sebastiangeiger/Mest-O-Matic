@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110701140102) do
+ActiveRecord::Schema.define(:version => 20110703191200) do
 
   create_table "class_ofs", :force => true do |t|
     t.integer  "year"
@@ -50,6 +50,10 @@ ActiveRecord::Schema.define(:version => 20110701140102) do
     t.integer  "reviewer_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "archive_file_name"
+    t.string   "archive_content_type"
+    t.integer  "archive_file_size"
+    t.datetime "archive_updated_at"
   end
 
   create_table "semesters", :force => true do |t|

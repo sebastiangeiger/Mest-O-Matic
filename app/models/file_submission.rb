@@ -36,9 +36,9 @@ class FileSubmission < Submission
     end
   end
 
-  def unzip
+  def unzip #TODO: needs to be tested! When does this get called?
     FileUtils.mkdir_p(unzipped_path) unless File.exists?(unzipped_path)
-    unzip_file(archive.path, unzipped_path)
+    MyZip.unzip_file(archive.path, unzipped_path) 
     unzipped_path
   end
 
@@ -47,25 +47,8 @@ class FileSubmission < Submission
   end
 
   private
-    def unzip_file (file, destination)
-      Zip::Archive.open(file) do |ar| #TODO: Clean up empty folders? Shadrack style
-        ar.each do |zf|
-          file_name = File.join(destination,zf.name)
-          if zf.directory?
-            FileUtils.mkdir_p(file_name)
-          else
-            dirname = File.dirname(file_name)
-            FileUtils.mkdir_p(dirname) unless File.exist?(dirname)
-            open(file_name, 'wb') {|f| f << zf.read}
-          end
-        end
-      end#close_file
-    end
-      
-
     def folder_number
       archive.path.match(/\/system\/archives\/(\d+)\/original\//)[1]
     end
 
-    
 end

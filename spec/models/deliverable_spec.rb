@@ -158,24 +158,6 @@ describe Deliverable do
     
   end
   
-  describe "#remove_root_path" do
-    it "should return the path when the root path is nil" do
-      Deliverable.remove_root_path("a/b.txt", nil).should == "a/b.txt"
-    end
-    it "should return the path when the root path is empty" do
-      Deliverable.remove_root_path("a/b.txt", "").should == "a/b.txt"
-    end
-    it "should return b.txt when given 'a/b.txt' and a root 'a'" do
-      Deliverable.remove_root_path("a/b.txt", "a").should == "b.txt"
-    end
-    it "should return 'b/c.txt' when given 'a/b/c.txt and a root 'a/b'" do
-      Deliverable.remove_root_path("a/b/c.txt", "a").should == "b/c.txt"
-    end
-    it "should return 'c/d' when given 'a/b/c/d' and a root 'a/b'" do
-      Deliverable.remove_root_path("a/b/c/d", "a/b").should == "c/d"
-    end
-  end
-
   describe "#eits_submitted" do
     before(:each) do
       @sol = Solution.new
@@ -247,5 +229,60 @@ describe Deliverable do
     it "should return true if there all submissions have review and they both have been updated one month and one day ago"# do
       #@del.should be_closed
     #end
+  end
+
+  describe "#process_corrections_archive" do
+    before(:each) do
+      @del = Deliverable.new
+      MyZip.expects(:unzip_file).with("/path/to/zipfile", anything).returns("/path/to/unzipped")
+      Dir.expects(:entries).with("/path/to/unzipped").returns(%w[. .. unzipped_archive])
+      File.expects(:directory?).with("/path/to/unzipped/unzipped_archive").returns true
+      @e1 = Eit.new
+      @e1.email = "eit1@meltwater.org"
+      @e2 = Eit.new
+      @e2.email = "eit2@meltwater.org"
+      @del.stubs(:safe_title).returns "deliverabletitle"
+      @project = Project.new
+      @project.stubs(:safe_title).returns "projecttitle"
+      @del.stubs(:project).returns @project
+      @sol1 = Solution.new
+      @sub1 = Submission.new
+      @sol1.stubs(:submissions).returns [Submission.new, @sub1]
+      @rev1 = Review.new
+      @rev1.stubs(:submission).returns @sub1
+      @sub1.stubs(:review).returns @rev1
+      @sub1.stubs(:version).returns 1
+      @sol2 = Solution.new
+      @sub2 = Submission.new
+      @sol2.stubs(:submissions).returns [Submission.new, @sub2]
+      @rev2 = Review.new
+      @rev2.stubs(:submission).returns @sub2
+      @sub2.stubs(:review).returns @rev2
+      @sub2.stubs(:version).returns 1
+    end
+
+    it "should return with an unzipped archive with two eits and two eits for the deliverable returns true" do
+      Dir.expects(:entries).with("/path/to/unzipped/unzipped_archive").returns %w[. .. eit1_1 eit2_1]
+      @del.expects(:eits_submitted).at_least_once.returns [@e1, @e2]
+      Solution.stubs(:find_or_create).with(:user => @e1, :deliverable => @del).returns @sol1 
+      Solution.stubs(:find_or_create).with(:user => @e2, :deliverable => @del).returns @sol2 
+      MyZip.expects(:zip_file).with("/path/to/unzipped/unzipped_archive/eit1_1", anything)
+      MyZip.expects(:zip_file).with("/path/to/unzipped/unzipped_archive/eit2_1", anything)
+      @del.process_corrections_archive("/path/to/zipfile").should == true 
+    end
+    it "should return with an unzipped archive with one eits and two eits for the deliverable returns false" do
+      Dir.expects(:entries).with("/path/to/unzipped/unzipped_archive").returns %w[. .. eit1_1]
+      @del.expects(:eits_submitted).at_least_once.returns [@e1, @e2]
+      @del.process_corrections_archive("/path/to/zipfile").should == false 
+    end
+    it "should return with an unzipped archive with three eits and two eits for the deliverable returns ignores the superflous user and returns true" do
+      Dir.expects(:entries).with("/path/to/unzipped/unzipped_archive").returns %w[. .. eit1_1 eit2_1 eit3_1]
+      @del.expects(:eits_submitted).at_least_once.returns [@e1, @e2]
+      Solution.stubs(:find_or_create).with(:user => @e1, :deliverable => @del).returns @sol1 
+      Solution.stubs(:find_or_create).with(:user => @e2, :deliverable => @del).returns @sol2 
+      MyZip.expects(:zip_file).with("/path/to/unzipped/unzipped_archive/eit1_1", anything)
+      MyZip.expects(:zip_file).with("/path/to/unzipped/unzipped_archive/eit2_1", anything)
+      @del.process_corrections_archive("/path/to/zipfile").should == true 
+    end
   end
 end

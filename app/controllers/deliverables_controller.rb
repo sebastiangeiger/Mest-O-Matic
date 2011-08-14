@@ -31,6 +31,21 @@ class DeliverablesController < ApplicationController
     #redirect_to project_path(@project)
   end
 
+  def upload
+    @deliverable = Deliverable.find(params[:id])
+  end
+
+  def process_upload
+    @deliverable = Deliverable.find(params[:id])
+    if @deliverable.process_corrections_archive(params[:archive].tempfile) then
+      flash[:notice] = "Successfully distributed your corrections to the students"
+      redirect_to project_path(@project)
+    else
+      flash[:error] = "The archive that you uploaded did not contain a folder for each student that submitted or had additional folders"
+      render :action => "upload" 
+    end
+  end
+
   private
     def load_project
       @project = Project.find(params[:project_id])

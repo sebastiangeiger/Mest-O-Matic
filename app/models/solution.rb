@@ -31,4 +31,8 @@ class Solution < ActiveRecord::Base
     end
     return solution
   end
+
+  def latest_submission
+    submissions.last
+  end
 end

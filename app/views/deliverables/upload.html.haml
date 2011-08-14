@@ -1,0 +1,17 @@
+%h1= "Upload corrected versions for \"#{@deliverable.title}\""
+%p
+  - if @deliverable.latest_version_nr == 0 then
+    = "There was no submission yet, the upload is disabled."
+  - else
+    - if (cv = current_user.latest_downloaded_version_nr(@deliverable)) < @deliverable.latest_version_nr  then
+      - if cv > 0
+        = "The latest version you downloaded is #{cv}, however the current version is #{@deliverable.latest_version_nr}"  
+      - else
+        = "You never downloaded the submissions, the current version is #{@deliverable.latest_version_nr}."  
+      = link_to "Download latest version", download_project_deliverable_path(@deliverable.project, @deliverable)
+    = form_tag process_upload_project_deliverable_path,  :multipart => true do |f|
+      %ol
+        %li= label_tag :archive, "File"
+        %li= file_field_tag :archive
+        %li
+          #button= submit_tag "Upload Corrections"

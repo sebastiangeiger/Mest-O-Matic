@@ -15,7 +15,6 @@
 #  graded         :boolean
 #  last_graded_at :date
 #
-
 class Deliverable < ActiveRecord::Base
   belongs_to :project
   belongs_to :author, :class_name => "User", :foreign_key => "author_id"
@@ -147,49 +146,71 @@ class Deliverable < ActiveRecord::Base
     versions.keys.max
   end
 
-  private
-    def Deliverable.remove_root_path(path, root)
-      roots = []
-      paths = []
-      roots = root.split("/").reject{|p| p.empty?} if root
-      paths = path.split("/").reject{|p| p.empty?} if path
-      while paths.first.eql?(roots.shift) do
-        paths.shift
+  def process_corrections_archive(file)
+    filename = file.is_a?(String) ? file : file.path
+    tmpdir = File.join(Dir.tmpdir, "#{File.basename(filename)}-unzipped")
+    unzipped_dir = MyZip.unzip_file(file,tmpdir)
+    unzipped_files = Dir.entries(unzipped_dir).reject{|d| %w[. ..].include?d}
+    if unzipped_files.size == 1 and File.directory?(File.join(unzipped_dir, unzipped_files.first)) then
+      eit_root = File.join(unzipped_dir, unzipped_files.first)
+      eit_folders = Dir.entries(eit_root).reject{|d| %w[. ..].include?d}
+      if has_a_folder_and_a_review_for_each_student(eit_folders, eits_submitted) then
+        extract_eits_and_reviews(eit_folders).each_pair do |eit,review|
+          zipfile = File.join(tmpdir, "Review_of_#{project.safe_title}_#{safe_title}_ver#{review.submission.version}.zip")
+          folder = File.join(eit_root, "#{eit.identifier_name}_#{review.submission.version}")
+          MyZip.zip_file(folder, zipfile)
+          review.archive = File.open(zipfile, "rb") if File.exists?(zipfile)
+          review.save #need to save to add the zipfile
+          #TODO: Delete temp files
+        end
+        return true
       end
-      return paths.join("/")
     end
+    false
+  end
 
+  def has_a_folder_and_a_review_for_each_student(folders, list_of_students)
+    extract_eits_and_reviews(folders).keys.collect{|e| e.identifier_name}.sort == list_of_students.collect{|e| e.identifier_name}.sort
+  end
+
+  def extract_eits_and_reviews(folders)
+    result = {}
+    folders.each do |folder|
+      if matchdata = folder.match(/(.*)_(\d+)$/) then
+        eit = eits_submitted.select{|e| e.identifier_name == matchdata[1]}.first
+        version = matchdata[2].to_i
+        sol = Solution.find_or_create(:user => eit, :deliverable => self) if eit
+        if sol and sol.submissions.size-1>=version then
+          review = sol.submissions[version].review 
+          result[eit] = review if eit and review
+        end
+      end
+    end
+    return result
+  end
+
+  private
     def version_unzipped_path(nr)
       File.join(Rails.root, "public/system/unzipped/deliverable_versions", nr.to_s)
     end
 
     def download_version(nr)
-      zip_root = "#{id}_#{project.safe_title}_#{safe_title}_ver#{nr}" 
-      zipped_file = File.join(Rails.root, "public/system/deliverables/#{zip_root}.zip")
-      FileUtils.mkdir_p(File.dirname(zipped_file))
-      unless File.exists?(zipped_file) then
-        dest_folder = version_unzipped_path(nr)
-        FileUtils.rm_r(dest_folder) if File.exists?(dest_folder) # Start with a clean slate
-        FileUtils.mkdir_p(dest_folder)
-        #Copy everything into dest_folder
-        versions[nr].each do |sub| 
-          user_dest = File.join(dest_folder, "#{sub.user.identifier_name}_#{sub.version}") 
-          FileUtils.cp_r(sub.unzipped_path, user_dest) if sub.is_a? FileSubmission and not RAILS_ENV == 'test' #TODO: Find a way to test uploads!
+      zip_file_name = "#{id}_#{project.safe_title}_#{safe_title}_ver#{nr}" 
+      zip_file_path = File.join(Rails.root, "public/system/deliverables/#{zip_file_name}.zip")
+      unless File.exists?(zip_file_path) then
+        FileUtils.mkdir_p(File.dirname(zip_file_path))
+        temp_folder = version_unzipped_path(nr)
+        FileUtils.rm_r(temp_folder) if File.exists?(temp_folder) # Start with a clean slate
+        FileUtils.mkdir_p(temp_folder)
+        #Copy everything into temp_folder
+        versions[nr].each do |submission| 
+          user_dest = File.join(temp_folder, "#{submission.user.identifier_name}_#{submission.version}") 
+          FileUtils.cp_r(submission.unzipped_path, user_dest) if submission.is_a? Filesubmission and not RAILS_ENV == 'test' #TODO: Find a way to test uploads!
         end 
-        #Create zipfile out of dest_folder
-        Zip::Archive.open(zipped_file, Zip::CREATE) do |ar| 
-          ar.add_dir(zip_root)
-          Dir.glob("#{dest_folder}/**/*").each do |path|
-            zip_path = File.join(zip_root, Deliverable.remove_root_path(path, dest_folder)) 
-            if File.directory?(path)
-              ar.add_dir(zip_path) 
-            else
-              ar.add_file(zip_path, path) 
-            end
-          end
-        end
+        #Create zipfile out of temp_folder
+        MyZip.zip_file(temp_folder, zip_file_path)
       end
       #send_file t.path, :type => 'application/zip', :disposition => 'attachment', :filename => "some-brilliant-file-name.zip"
-      zipped_file
+      zip_file_path
     end
 end

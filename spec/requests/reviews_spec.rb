@@ -71,7 +71,7 @@ feature "Review", %q{
     page.should_not have_content("This deliverable was created by Staff Member. Are you sure you want to grade it?")
   end
 
-  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The site should not show a warning." do
+  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The page to enter grades should not show a warning." do
     a2 = Assignment.create(:title => "Second Project", :semester => @firstSemester, :start => DateTime.now-1.weeks)
     d3 = Deliverable.create(:title => "A past Deliverable for the Second Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a2, :author => @staff)
     visit "/testlogin/1"
@@ -83,7 +83,7 @@ feature "Review", %q{
     page.should_not have_content("Download")
   end
 
-  scenario "Login as a staff member, you never downloaded a version and there were three submissions. The site should show a warning." do
+  scenario "Login as a staff member, you never downloaded a version and there were three submissions. The page to enter grades should show a warning." do
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("First")
@@ -92,8 +92,8 @@ feature "Review", %q{
     page.should have_content("Download")
   end
 
-  scenario "Login as a staff member, you downloaded version one and there were two submissions. The site should show a warning." do
-    cd = VersionDownload.create(:deliverable => @d1, :version_nr => 1, :downloader => @staff)
+  scenario "Login as a staff member, you downloaded version one and there were two submissions. The page to enter grades should show a warning." do
+    VersionDownload.create(:deliverable => @d1, :version_nr => 1, :downloader => @staff)
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("First")
@@ -102,8 +102,8 @@ feature "Review", %q{
     page.should have_content("Download")
   end
 
-  scenario "Login as a staff member, you downloaded version two and there were two submissions. The site should not show a warning." do
-    cd = VersionDownload.create(:deliverable => @d1, :version_nr => 2, :downloader => @staff)
+  scenario "Login as a staff member, you downloaded version two and there were two submissions. The page to enter grades should not show a warning." do
+    VersionDownload.create(:deliverable => @d1, :version_nr => 2, :downloader => @staff)
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("First")
@@ -113,7 +113,7 @@ feature "Review", %q{
     page.should_not have_content("Download")
   end
 
-  scenario "Only two out of three Eits have handed in a submission. I Login as a staff member, go to a valid deliverable review site, it has boxes for all three eits" do
+  scenario "Only two out of three Eits have handed in a submission. I Login as a staff member, go to a valid deliverable review page, it has boxes for all three eits" do
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
@@ -157,6 +157,88 @@ feature "Review", %q{
     fill_in("submissions_8_review_attributes_percentage", :with => 76)
     find_button("Save").click
     Review.where(:submission_id => @sub2.id).first.percentage.should == 76
+  end
+
+  
+  #TODO: The whole download/upload stuff needs to go into deliverables, or in a separate feature file
+  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The page to Upload Corrections should show a warning." do
+    a2 = Assignment.create(:title => "Second Project", :semester => @firstSemester, :start => DateTime.now-1.weeks)
+    d3 = Deliverable.create(:title => "A past Deliverable for the Second Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a2, :author => @staff)
+    visit "/testlogin/1"
+    visit "/projects/2"
+    page.should have_content("Second")
+    find_link("Upload Corrections").click
+    page.should_not have_button("Upload Corrections")
+    page.should have_content("no submission")
+  end
+
+  scenario "Login as a staff member, you never downloaded a version and there were three submissions. The page to Upload Corrections should show a warning." do
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Upload Corrections").click
+    page.should have_content("You never downloaded")
+    page.should have_content("Download")
+  end
+
+  scenario "Login as a staff member, you downloaded version one and there were two submissions. The page to Upload Corrections should show a warning." do
+    VersionDownload.create(:deliverable => @d1, :version_nr => 1, :downloader => @staff)
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Upload Corrections").click
+    page.should have_content("1, however the current version is 2")
+    page.should have_content("Download")
+  end
+
+  scenario "Login as a staff member, you downloaded version two and there were two submissions. The page to Upload Corrections should not show a warning." do
+    VersionDownload.create(:deliverable => @d1, :version_nr => 2, :downloader => @staff)
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("First")
+    find_link("Upload Corrections").click
+    page.should_not have_content("however the current version is")
+    page.should_not have_content("latest version")
+    page.should_not have_content("Download")
+  end
+
+  scenario "Go to project page for a finished deliverable, it should show a link to upload the corrected assignments" do
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("Deliverables (2)")
+    page.should have_link("Upload Corrections", :href => "/projects/1/deliverables/1/upload")
+  end
+
+  scenario "Go to project page for a finished deliverable, upload the corrected assignments with only one eit, should give an error message" do
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("Deliverables (2)")
+    page.should have_link("Upload Corrections", :href => "/projects/1/deliverables/1/upload")
+    find_link("Upload Corrections").click
+    current_url.should == "http://www.example.com/projects/1/deliverables/1/upload"
+    attach_file("File", File.join(::Rails.root, "spec", "fixtures", "files", "correction_one_eit.zip"))
+    find_button("Upload Corrections").click
+    current_url.should == "http://www.example.com/projects/1/deliverables/1/process_upload"
+    page.should have_button("Upload Corrections")
+    page.should have_content("The archive that you uploaded did not contain a folder for each student that submitted")
+  end
+
+  scenario "Go to project page for a finished deliverable, it upload the corrected assignments with a folder for each of the two eits, should give a success message" do
+    r1 = Review.create(:submission => @sub1, :reviewer => @staff)
+    r2 = Review.create(:submission => @sub2, :reviewer => @staff)
+    visit "/testlogin/1"
+    visit "/projects/1"
+    page.should have_content("Deliverables (2)")
+    page.should have_link("Upload Corrections", :href => "/projects/1/deliverables/1/upload")
+    find_link("Upload Corrections").click
+    current_url.should == "http://www.example.com/projects/1/deliverables/1/upload"
+    attach_file("File", File.join(::Rails.root, "spec", "fixtures", "files", "correction_two_eits.zip"))
+    find_button("Upload Corrections").click
+    current_url.should == "http://www.example.com/projects/1"
+    page.should_not have_button("Upload Corrections")
+    page.should have_content("Successfully distributed your corrections to the students")
+    r1.reload.archive?.should == true #need to reload here because the attachment is saved to the database
+    r2.reload.archive?.should == true
   end
 end
 
