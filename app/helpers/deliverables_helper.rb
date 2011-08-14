@@ -41,13 +41,14 @@ module DeliverablesHelper
       end
     elsif user.staff? then
       if deliverable.invisible? then
-        haml_tag :img, :src => "/icons/document_invisible.png", :alt => "This document is invisible to EITs"
+        haml_tag :img, :src => "/icons/document_invisible.png", :alt => "This deliverable is invisible to EITs"
       elsif deliverable.current? and not deliverable.ended? then
-        haml_tag :img, :src => "/icons/document_pen.png", :alt => "This document is invisible to EITs"
-      elsif deliverable.ended? and not deliverable.graded? then
-        haml_tag :img, :src => "/icons/clock.png", :alt => "This document is invisible to EITs"
-      elsif deliverable.graded? then
-        haml_tag :img, :src => "/icons/done.png", :alt => "This document is invisible to EITs"
+        haml_tag :img, :src => "/icons/document_to_solve.png", :alt => "EITs should be working on this document" if deliverable.eits_submitted.size<deliverable.eits.size
+        haml_tag :img, :src => "/icons/submitted.png", :alt => "EITs should be working on this document" if deliverable.eits_submitted.size==deliverable.eits.size
+      elsif deliverable.ended? and not deliverable.newest_submissions_all_graded? then
+        haml_tag :img, :src => "/icons/exclamation.png", :alt => "This deliverable has submissions that have not been graded yet"
+      elsif deliverable.ended? and deliverable.newest_submissions_all_graded? then
+        haml_tag :img, :src => "/icons/done.png", :alt => "This deliverable is invisible to EITs"
       end
     end
   end

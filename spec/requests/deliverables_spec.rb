@@ -258,6 +258,7 @@ feature "Deliverable", %q{
     visit "/projects/1"
     page.should have_content("0/2")
     page.should have_content("submitted")
+    page.should have_xpath("//img[@src='/icons/document_to_solve.png']")
   end
 
   scenario "Login as Staff, show a project, a current Deliverable with two students and one submitted, shows that 1/2 submitted" do
@@ -269,6 +270,7 @@ feature "Deliverable", %q{
     visit "/projects/1"
     page.should have_content("1/2")
     page.should have_content("submitted")
+    page.should have_xpath("//img[@src='/icons/document_to_solve.png']")
   end
 
   scenario "Login as Staff, show a project, a current Deliverable with two students and both submitted, shows that 2/2 submitted" do
@@ -282,6 +284,7 @@ feature "Deliverable", %q{
     visit "/projects/1"
     page.should have_content("2/2")
     page.should have_content("submitted")
+    page.should have_xpath("//img[@src='/icons/submitted.png']")
   end
 
 
@@ -289,11 +292,14 @@ feature "Deliverable", %q{
     d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now - 1.day, :project => @a1, :author => @staff)
     visit "/testlogin/3"
     visit "/projects/1"
-    page.should have_xpath("//img[@src='/icons/clock.png']")
+    page.should have_xpath("//img[@src='/icons/exclamation.png']")
   end
 
   scenario "Login as Staff, show a project, a graded Deliverable shows the correct icon" do
     d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now - 1.day, :project => @a1, :author => @staff, :graded => true)
+    sol = Solution.find_or_create(:deliverable => d1, :user => @e2) 
+    sub = FileSubmission.create(:solution => sol, :archive => @zipFile)
+    Review.create(:submission => sub, :reviewer => @staff)
     visit "/testlogin/3"
     visit "/projects/1"
     page.should have_xpath("//img[@src='/icons/done.png']")

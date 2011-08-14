@@ -83,6 +83,11 @@ class Deliverable < ActiveRecord::Base
   def closed?
     graded? and end_date < Time.now - 1.months
   end
+  
+  def newest_submissions_all_graded?
+    reviews = solutions.collect{|s| s.submissions.sort{|a,b| a.created_at<=> b.created_at}.last.review}
+    return (not reviews.include?(nil))
+  end
 
   def not_closed_yet?
     not closed?
