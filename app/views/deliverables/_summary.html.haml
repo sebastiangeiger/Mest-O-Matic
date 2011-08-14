@@ -23,7 +23,11 @@
 				- if deliverable.versions.keys.max >= 1 then
 					%p
 						= link_to "Download all Submissions (Version #{deliverable.versions.keys.max})", download_project_deliverable_path(deliverable.project, deliverable)
-						= current_user.latest_version_downloaded(deliverable) ? "Downloaded" : "Never downloaded" 
-				= link_to "Enter Grades", project_deliverable_reviews_path(deliverable.project, deliverable) if deliverable.ended?
-				= link_to "Upload Corrections", upload_project_deliverable_path(deliverable.project, deliverable) if deliverable.ended?
+						= current_user.latest_version_downloaded(deliverable) ? "Downloaded" : "Never downloaded"
+				- if deliverable.ended? then 
+					= link_to "Enter Grades", project_deliverable_reviews_path(deliverable.project, deliverable)
+					- if deliverable.newest_submissions_all_graded? and deliverable.eits_submitted.size > 0 then
+						= link_to "Upload Corrections", upload_project_deliverable_path(deliverable.project, deliverable)
+					- else
+						Please enter all grades first, then upload files.
 			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable) if current_user.eit?

@@ -161,18 +161,18 @@ feature "Review", %q{
 
   
   #TODO: The whole download/upload stuff needs to go into deliverables, or in a separate feature file
-  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The page to Upload Corrections should show a warning." do
+  scenario "Login as a staff member, you never downloaded a version and there was never a submission. The link to upload corrections should be hidden." do
     a2 = Assignment.create(:title => "Second Project", :semester => @firstSemester, :start => DateTime.now-1.weeks)
     d3 = Deliverable.create(:title => "A past Deliverable for the Second Project", :start_date => DateTime.now-2.days, :end_date => DateTime.now-1.hours, :project => a2, :author => @staff)
     visit "/testlogin/1"
     visit "/projects/2"
     page.should have_content("Second")
-    find_link("Upload Corrections").click
     page.should_not have_button("Upload Corrections")
-    page.should have_content("no submission")
+    page.should have_content("all grades first")
   end
 
   scenario "Login as a staff member, you never downloaded a version and there were three submissions. The page to Upload Corrections should show a warning." do
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("First")
@@ -182,6 +182,7 @@ feature "Review", %q{
   end
 
   scenario "Login as a staff member, you downloaded version one and there were two submissions. The page to Upload Corrections should show a warning." do
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     VersionDownload.create(:deliverable => @d1, :version_nr => 1, :downloader => @staff)
     visit "/testlogin/1"
     visit "/projects/1"
@@ -192,6 +193,7 @@ feature "Review", %q{
   end
 
   scenario "Login as a staff member, you downloaded version two and there were two submissions. The page to Upload Corrections should not show a warning." do
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     VersionDownload.create(:deliverable => @d1, :version_nr => 2, :downloader => @staff)
     visit "/testlogin/1"
     visit "/projects/1"
@@ -203,6 +205,7 @@ feature "Review", %q{
   end
 
   scenario "Go to project page for a finished deliverable, it should show a link to upload the corrected assignments" do
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
@@ -210,6 +213,7 @@ feature "Review", %q{
   end
 
   scenario "Go to project page for a finished deliverable, upload the corrected assignments with only one eit, should give an error message" do
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
@@ -226,6 +230,7 @@ feature "Review", %q{
   scenario "Go to project page for a finished deliverable, it upload the corrected assignments with a folder for each of the two eits, should give a success message" do
     r1 = Review.create(:submission => @sub1, :reviewer => @staff)
     r2 = Review.create(:submission => @sub2, :reviewer => @staff)
+    Deliverable.any_instance.stubs(:newest_submissions_all_graded?).returns true
     visit "/testlogin/1"
     visit "/projects/1"
     page.should have_content("Deliverables (2)")
