@@ -143,6 +143,23 @@ feature "Deliverable", %q{
     page.should have_xpath("//img[@src='/icons/exclamation.png']")
   end
 
+  scenario "Login as an Eit of class 2023, show a project (class of 2023), a graded Deliverable with a submission on time that was reviewed and a correction has been uploaded shows a link to download it" do
+    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now - 1.day, :project => @a1, :author => @staff, :graded => true)
+    f1 = FileSubmission.create(:solution => d1.solutions.first, :archive => @zipFile, :created_at => Time.now-2.days)
+    r1 = Review.create(:submission => f1, :reviewer => @staff, :percentage => 93, :archive => @zipFile)
+    visit "/testlogin/2"
+    visit "/projects/1"
+    page.should have_link("Download correction") #TODO: Link does not do anything yet
+  end
+
+  scenario "Login as an Eit of class 2023, show a project (class of 2023), a graded Deliverable with a submission on time that was reviewed and no correction has been uploaded does not show a link to download it" do
+    d1 = Deliverable.create(:title => "A Deliverable for the First Project", :start_date => Time.now - 7.weeks, :end_date => Time.now - 1.day, :project => @a1, :author => @staff, :graded => true)
+    f1 = FileSubmission.create(:solution => d1.solutions.first, :archive => @zipFile, :created_at => Time.now-2.days)
+    r1 = Review.create(:submission => f1, :reviewer => @staff, :percentage => 93)
+    visit "/testlogin/2"
+    visit "/projects/1"
+    page.should_not have_link("Download correction")
+  end
 end
 
 feature "Deliverable", %q{

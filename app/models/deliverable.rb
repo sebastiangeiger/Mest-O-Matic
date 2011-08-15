@@ -103,9 +103,11 @@ class Deliverable < ActiveRecord::Base
   end
   
   def review_for(by_user)
+    result = nil
     user_solution = solutions.select{|sol| sol.user.eql?(by_user)}.first
     reviewed_solution = user_solution.submissions.select{|s| s.review}.sort{|a,b| a.updated_at <=> b.updated_at}.first
-    reviewed_solution.review if reviewed_solution
+    result = reviewed_solution.review if reviewed_solution
+    return result
   end
 
   def not_submitted?(by_user)

@@ -30,4 +30,6 @@
 						= link_to "Upload Corrections", upload_project_deliverable_path(deliverable.project, deliverable)
 					- else
 						Please enter all grades first, then upload files.
-			= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable) if current_user.eit?
+			- elsif current_user.eit?
+				= link_to "Add Submission", new_project_deliverable_submission_path(deliverable.project, deliverable)
+				= link_to "Download correction", download_project_deliverable_path(deliverable.project, deliverable) if rev = deliverable.review_for(current_user) and rev.archive?
